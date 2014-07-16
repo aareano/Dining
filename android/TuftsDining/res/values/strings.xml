@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<!-- App Stuff -->    	
+    <string name="app_name">Tufts Dining</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="action_example">Example action</string>
+	
+    <!-- - - - - - - - - - - - FRAGMENTS  - - - - - - - - - - - -->
+    
+    <!-- Navigation -->
+    <string name="title_comparison">Comparison</string>
+    <string name="title_rating">Rating</string>
+    <string name="title_section3">Section 3</string>
+    <string name="action_settings">Settings</string>
+
+    <!-- Default -->
+    <string name="instructions">Hit the drop down menu and choose an option.</string>
+    <string name="reminder">Data is cool.</string>
+    <string name="wrong">Something has gone terribly wrong.</string>
+    
+    <!-- Comparison -->
+    <string name="comparison">comparison</string>
+    <string name="button_dewick">Dewick</string>
+    <string name="dewick_stats" >Dewick:</string>
+    <string name="button_carm">Carmichael</string>
+    <string name="carm_stats" >Carmichael:</string>
+    <string name="underscore" >_____</string>
+    
+    <!-- Rating -->
+    <string name="rating">rating</string>
+    <string name="button_good">Approved!</string> <!-- Change to "APPROVED!" stamp image -->
+    <string name="button_bad">:(</string>
+    <string name="good_stats">Approval:</string>
+    <string name="bad_stats">Dislike:</string>
+    
+    <!-- - - - - - - - - - - - HTTP Protocol  - - - - - - - - - - - -->
+    
+    <!-- Keys for ArrayList -->
+    <string name="dewick_key">dewick</string>
+    <string name="carm_key">carm</string>
+    <string name="good_key">good</string>
+    <string name="bad_key">bad</string>
+    <string name="mac_key">mac_address</string>
+    <string name="message_key">message</string>
+    <string name="error_key">message</string>
+    
+    <string name="post_message_key">message</string>
+    <string name="post_error_key">error</string>
+    
+    <string name="get_message_key">message</string>
+    <string name="get_error_key">error</string>
+    
+    <!-- - - - - - - - - - - - Other - - - - - - - - - - - -->
+    
+    <!-- Colors -->
+    <color name="blue">#3924D6</color>
+    <color name="green">#008C09</color>
+    
+</resources>
