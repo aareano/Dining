@@ -90,8 +90,6 @@ $app->post('/vote', function() use ($app) {
  */
 $app->get('/tally_votes', function() use ($app) {
 
-	echo "hello";
-
 	$response = array();
 
 	$db = new DbHandler();

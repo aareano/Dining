@@ -2,7 +2,6 @@ package valrae.tufts.dining;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
@@ -11,6 +10,7 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -37,11 +37,22 @@ public class ComparisonFragment extends Fragment {
     private static final String TAG_MESSAGE = "message";
     private static final String TAG_DEWICK = "dewick";
     private static final String TAG_CARM = "carm";
-
+    
+    private ServiceManager mServer;
+    private String postJson = null;
+    private String getJson = null;
+    
+    // total seconds of trying
+    int total = 0;
+    
+    public static ComparisonFragment newInstance(Context context) {
+    	return new ComparisonFragment(context);
+    }
+    
 	public ComparisonFragment(Context context) {
+		Log.i(TAG, "new ComparisonFragment()");
 		CONTEXT = context;
 		COMPARISON = CONTEXT.getResources().getString(R.string.comparison);
-		Log.i(TAG, "new ComparisonFragment()");
 	}
 	
 	@Override
@@ -62,10 +73,6 @@ public class ComparisonFragment extends Fragment {
 		View rootView = inflater.inflate(R.layout.fragment_comparison, container, false);
         return rootView;
     }
-	
-	public static ComparisonFragment newInstance(Context context) {
-		return new ComparisonFragment(context);
-	}
 	
 	public void onClick(View button) {
 		Log.i(TAG, "onClick()");
@@ -89,38 +96,62 @@ public class ComparisonFragment extends Fragment {
 		data.add(new BasicNameValuePair(CONTEXT.getResources().getString(R.string.carm_key), 
 				carm));
 		
-		// run sequence to get statistics
-		ServiceManager server = new ServiceManager(CONTEXT, COMPARISON);
-		server.startService(data);
+		// run sequence to run HTTP requests, etc.
+		mServer = new ServiceManager(CONTEXT, COMPARISON);
+		mServer.startService(data);
 		
-		// get results
-//		String postJson = null;				// unused
-		String getJson = null;
-		
-		do {
-//		postJson = server.getPOSTJson();
-		getJson = server.getGETJson();
-		
-		try {						// wait a second
-		    Thread.sleep(1000);
-		} catch(InterruptedException ex) {
-		    Thread.currentThread().interrupt();
-		}
-			
-		} while (getJson == null);
-		
-		Log.d(TAG, "getJson = " + getJson);
-		
-		// parse results
-//		List<NameValuePair> postItems = new ArrayList<NameValuePair>();
-		List<NameValuePair> getItems = new ArrayList<NameValuePair>();
-//		postItems = parsePostJson(postJson);
-		getItems = parseGetJson(getJson);
-		
-		// update the counter TextViews
-		updateCounters(getItems);
+		getWithHandler();
 	}
 	
+	
+	/**
+	 * Uses a handler to get JSON data
+	 */
+	public void getWithHandler() {
+		// try every second for 5 seconds to get JSON strings 
+		final Handler h = new Handler();
+		final int DELAY = 1000;		//milliseconds
+		final int MAX = 7000;		//milliseconds
+		
+		h.postDelayed(new Runnable(){
+		    
+			public void run(){
+		    	
+				if (ServiceManager.getStatus() == true) {
+		    		postJson = mServer.getPOSTJson();
+		    		getJson = mServer.getGETJson();
+		    	}
+		    	
+		    	if (total <= MAX && postJson == null && getJson == null)
+		    		h.postDelayed(this, DELAY);
+		    	
+		    	else if (postJson != null && getJson != null) {
+		    		Log.i(TAG, "Seconds to retrieve data: " + total);
+		    		
+		    		// parse results
+//		    		List<NameValuePair> postItems = new ArrayList<NameValuePair>();
+//		    		postItems = parsePostJson(postJson);
+		    		List<NameValuePair> getItems = new ArrayList<NameValuePair>();
+		    		getItems = parseGetJson(getJson);
+		    		
+		    		// update the counter TextViews
+		    		updateCounters(getItems);
+		    		
+		    	} else if (total > MAX) {	
+		    		// data retrieval took too long
+		    		Log.d(TAG, "Data retrieval took too long.");
+		    		String toastText = "Something broke.";
+		    		Toast.makeText(CONTEXT, toastText, Toast.LENGTH_SHORT).show();
+		    	}
+		    	
+		    	// increment timer
+		    	total += 1000;
+		    }
+		}, DELAY);
+		
+		Log.d(TAG, "after postDelayed stuff");
+	}
+		
 	// Not actually used.
 	/**
 	 * Example method to extract single item from JSON.
@@ -156,6 +187,7 @@ public class ComparisonFragment extends Fragment {
      */
 	public List<NameValuePair> parsePostJson(String postJson) {
     	List<NameValuePair> postResults = new ArrayList<NameValuePair>();
+    	String errorAlert = "Something went wroooong!";
     	
     	// parse POST JSON and take appropriate action
 		if (postJson != null) {
@@ -170,6 +202,8 @@ public class ComparisonFragment extends Fragment {
 				postMessage = jsonObj.getString(TAG_MESSAGE);
 			} catch (JSONException e) {
 				e.printStackTrace();
+				Log.e(TAG, "Error in parseGetJson()");
+				Toast.makeText(CONTEXT, errorAlert, Toast.LENGTH_SHORT).show();
 			}
 			postResults.add(new BasicNameValuePair(
 					CONTEXT.getResources().getString(R.string.post_error_key), 
@@ -179,17 +213,20 @@ public class ComparisonFragment extends Fragment {
 					postMessage));
 			
 			if (postError) {	// post error
+				Log.e(TAG, "Unable to record entry.");
 				String toastText = "Unable to record entry. Sorry about that.";
 				Toast.makeText(CONTEXT, toastText, Toast.LENGTH_LONG).show();
 			}
 		} else {
 			Log.e("ServiceManager", "Couldn't get any data from the URL");
+			Toast.makeText(CONTEXT, errorAlert, Toast.LENGTH_SHORT).show();
 		}
 		return postResults;
 	}
 		
 	public List<NameValuePair> parseGetJson (String getJson) {
 		List<NameValuePair> getResults= new ArrayList<NameValuePair>();
+		String errorAlert = "Something went wroooong!";
 		
 		// parse GET JSON and take appropriate action
 		if (getJson != null) {
@@ -209,6 +246,8 @@ public class ComparisonFragment extends Fragment {
 				carm 	= jsonObj.getString(TAG_CARM);
 			} catch (JSONException e) {
 				e.printStackTrace();
+				Log.e(TAG, "Error in parseGetJson()");
+				Toast.makeText(CONTEXT, errorAlert, Toast.LENGTH_SHORT).show();
 			}
 			getResults.add(new BasicNameValuePair(
 					CONTEXT.getResources().getString(R.string.get_error_key), 
@@ -260,11 +299,8 @@ public class ComparisonFragment extends Fragment {
      * @return value with key = 'key'
      */
     public String getValueFromKey(List<NameValuePair> result, String key) {
-    	Log.d("ComparisonFragment", "key: " + key);
-    	Log.d("ComparisonFragment", "arraylist result: " + result.toString());
     	
     	for (int i = 0; i < result.size(); i++) {
-    		Log.d("ComparisonFragment", "result.get(i).getName() = " + result.get(i).getName());
     		if (result.get(i).getName().equals(key))
     			return result.get(i).getValue();
     	}

@@ -11,6 +11,7 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,6 +27,8 @@ import android.widget.Toast;
  */
 public class RatingFragment extends Fragment {
 
+	private final String TAG = "ComparisonFragment";
+	
 	// Functionality
 	private final String RATING;
 	private final Context CONTEXT;
@@ -35,8 +38,16 @@ public class RatingFragment extends Fragment {
     private static final String TAG_MESSAGE = "message";
     private static final String TAG_GOOD = "good";
     private static final String TAG_BAD = "bad";
-	
+
+    private ServiceManager mServer;
+    private String postJson = null;
+    private String getJson = null;
+
+    // total seconds of trying
+    int total = 0;
+    
 	public RatingFragment (Context context) {
+		Log.i(TAG, "new ComparisonFragment()");
 		CONTEXT = context;
 		RATING = CONTEXT.getResources().getString(R.string.rating);
 	}
@@ -65,7 +76,8 @@ public class RatingFragment extends Fragment {
 	}
 	
 	public void onClick(View button) {
-	
+		Log.i(TAG, "onClick()");
+		
 		int buttonId = button.getId();
 		
 		// Get my data
@@ -85,21 +97,59 @@ public class RatingFragment extends Fragment {
 		data.add(new BasicNameValuePair(CONTEXT.getResources().getString(R.string.bad_key), 
 				bad));
 		
-		// run sequence to get statistics
-		ServiceManager server = new ServiceManager(CONTEXT, RATING);
-		server.startService(data);
-		
-		// get results
-//		String postJson = server.getPOSTJson();				// unused
-		String getJson = server.getGETJson();
+	// run sequence to run HTTP requests, etc.
+			mServer = new ServiceManager(CONTEXT, RATING);
+			mServer.startService(data);
+			
+			getWithHandler();
+		}
 	
-//		List<NameValuePair> postItems = new ArrayList<NameValuePair>();
-		List<NameValuePair> getItems = new ArrayList<NameValuePair>();
-//		postItems = parsePostJson(postJson);
-		getItems = parseGetJson(getJson);
+	/**
+	 * Uses a handler to get JSON data
+	 */
+	public void getWithHandler() {
+		// try every second for 5 seconds to get JSON strings 
+		final Handler h = new Handler();
+		final int DELAY = 1000;		//milliseconds
+		final int MAX = 7000;		//milliseconds
 		
-		// update the counter TextViews
-		updateCounters(getItems);
+		h.postDelayed(new Runnable(){
+		    
+			public void run(){
+		    	
+				if (ServiceManager.getStatus() == true) {
+		    		postJson = mServer.getPOSTJson();
+		    		getJson = mServer.getGETJson();
+		    	}
+		    	
+		    	if (total <= MAX && postJson == null && getJson == null)
+		    		h.postDelayed(this, DELAY);
+		    	
+		    	else if (postJson != null && getJson != null) {
+		    		Log.i(TAG, "Seconds to retrieve data: " + total);
+		    		
+		    		// parse results
+//		    		List<NameValuePair> postItems = new ArrayList<NameValuePair>();
+//		    		postItems = parsePostJson(postJson);
+		    		List<NameValuePair> getItems = new ArrayList<NameValuePair>();
+		    		getItems = parseGetJson(getJson);
+		    		
+		    		// update the counter TextViews
+		    		updateCounters(getItems);
+		    		
+		    	} else if (total > MAX) {	
+		    		// data retrieval took too long
+		    		Log.d(TAG, "Data retrieval took too long.");
+		    		String toastText = "Something broke.";
+		    		Toast.makeText(CONTEXT, toastText, Toast.LENGTH_SHORT).show();
+		    	}
+		    	
+		    	// increment timer
+		    	total += 1000;
+		    }
+		}, DELAY);
+		
+		Log.d(TAG, "after postDelayed stuff");
 	}
 	
 	// Not actually used.
@@ -137,6 +187,7 @@ public class RatingFragment extends Fragment {
      */
 	public List<NameValuePair> parsePostJson(String postJson) {
     	List<NameValuePair> postResults = new ArrayList<NameValuePair>();
+    	String errorAlert = "Something went wroooong!";
     	
     	// parse POST JSON and take appropriate action
 		if (postJson != null) {
@@ -151,6 +202,8 @@ public class RatingFragment extends Fragment {
 				postMessage = jsonObj.getString(TAG_MESSAGE);
 			} catch (JSONException e) {
 				e.printStackTrace();
+				Log.e(TAG, "Error in parseGetJson()");
+				Toast.makeText(CONTEXT, errorAlert, Toast.LENGTH_SHORT).show();
 			}
 			postResults.add(new BasicNameValuePair(
 					CONTEXT.getResources().getString(R.string.post_error_key), 
@@ -165,12 +218,14 @@ public class RatingFragment extends Fragment {
 			}
 		} else {
 			Log.e("ServiceManager", "Couldn't get any data from the URL");
+			Toast.makeText(CONTEXT, errorAlert, Toast.LENGTH_SHORT).show();
 		}
 		return postResults;
 	}
 		
 	public List<NameValuePair> parseGetJson (String getJson) {
 		List<NameValuePair> getResults= new ArrayList<NameValuePair>();
+		String errorAlert = "Something went wroooong!";
 		
 		// parse GET JSON and take appropriate action
 		if (getJson != null) {
@@ -190,6 +245,8 @@ public class RatingFragment extends Fragment {
 				bad 	= jsonObj.getString(TAG_BAD);
 			} catch (JSONException e) {
 				e.printStackTrace();
+				Log.e(TAG, "Error in parseGetJson()");
+				Toast.makeText(CONTEXT, errorAlert, Toast.LENGTH_SHORT).show();
 			}
 			getResults.add(new BasicNameValuePair(
 					CONTEXT.getResources().getString(R.string.get_error_key), 

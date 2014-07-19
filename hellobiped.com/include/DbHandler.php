@@ -35,10 +35,16 @@ Class DbHandler {
 	function isRecent($mac, $timestamp, $table) {
 
 		// echo("votes after ".$timestamp."?");
-		// base_convert($int, 10, 16);				// time limit doesn't work. after that's fixed, go ahead and test android!!!!!
+		// base_convert($int, 10, 16);
 
-		$stmt = $this->conn->prepare("SELECT * FROM ? c WHERE c.time_added >= ? AND HEX(c.mac_addr) = ?");
-		$stmt->bind_param("sss", $table, $timestamp, $mac);
+		if ($table == TBL_COMPARISON) {
+			$stmt = $this->conn->prepare("SELECT * FROM comparison c WHERE c.time_added >= ? AND HEX(c.mac_addr) = ?");
+			$stmt->bind_param("ss", $timestamp, $mac);
+		
+		} elseif ($table == TBL_RATING) {
+			$stmt = $this->conn->prepare("SELECT * FROM rating c WHERE c.time_added >= ? AND HEX(c.mac_addr) = ?");
+			$stmt->bind_param("ss", $timestamp, $mac);
+		}
 
 		// if preparation and binding were successful...
 		if ($stmt != false) {
@@ -83,7 +89,7 @@ Class DbHandler {
 						`time_added` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
 						`mac_addr` bigint(6) unsigned DEFAULT NULL,
 						 PRIMARY KEY (`id`)) 
-						 ENGINE=MyISAM AUTO_INCREMENT=110 DEFAULT CHARSET=utf8"
+						 ENGINE=MyISAM AUTO_INCREMENT=110 DEFAULT CHARSET=utf8";
 
 		$stmt = $this->conn->prepare($create);
 		if ($stmt != false) {
@@ -92,10 +98,10 @@ Class DbHandler {
 		}
 
 		// INSERT statement
-		$insert = "INSERT INTO ? (dewick, carmichael, time_added, mac_addr) 
+		$insert = "INSERT INTO `comparison` (dewick, carmichael, time_added, mac_addr) 
 						VALUES (?, ?, ?, ?)";
 		$stmt = $this->conn->prepare($insert);
-		$stmt->bind_param("ssssi", TBL_COMPARISON, $dewick, $carm, $now, $mac);
+		$stmt->bind_param("sssi", $dewick, $carm, $now, $mac);
 
 		if (!$stmt)
 			return false;
@@ -185,7 +191,7 @@ Class DbHandler {
 						`time_added` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
 						`mac_addr` bigint(6) unsigned DEFAULT NULL,
 						 PRIMARY KEY (`id`)) 
-						 ENGINE=MyISAM AUTO_INCREMENT=110 DEFAULT CHARSET=utf8"
+						 ENGINE=MyISAM AUTO_INCREMENT=110 DEFAULT CHARSET=utf8";
 
 		$stmt = $this->conn->prepare($create);
 		
@@ -196,9 +202,9 @@ Class DbHandler {
 
 
 		// INSERT statement
-		$insert = "INSERT INTO ? (good, bad, time_added, mac_addr) VALUES (?, ?, ?, ?)";
+		$insert = "INSERT INTO `rating` (good, bad, time_added, mac_addr) VALUES (?, ?, ?, ?)";
 		$stmt = $this->conn->prepare($insert);
-		$stmt->bind_param("ssssi", TBL_RATING, $good, $bad, $now, $mac);
+		$stmt->bind_param("sssi", $good, $bad, $now, $mac);
 		
 		if (!$stmt)
 			return NULL;

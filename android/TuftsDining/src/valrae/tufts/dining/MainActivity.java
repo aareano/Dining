@@ -15,11 +15,7 @@ import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
 
 
-
-
-// TODO rewrite comparison and rating as fragments. 
-// switch statement now goes in onNavigationDrawerItemSelected
-
+// TODO refresh on startup
 
 
 public class MainActivity extends ActionBarActivity
