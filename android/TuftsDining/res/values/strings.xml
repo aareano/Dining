@@ -52,6 +52,14 @@
     <string name="get_message_key">message</string>
     <string name="get_error_key">error</string>
     
+    <!-- - - - - - - - - - - - Toasts - - - - - - - - - - - -->
+    <string name="no_data">Couldn\'t get any data :(</string>
+	<string name="no_post">Unable to post vote, sorry about that.</string>
+	<string name="process_canceled">Process canceled</string>
+	<string name="recent_message">This address has posted a rating too recently.</string>
+	<string name="too_recent">No vote! You\'ve voted too recently.</string>
+    
+    
     <!-- - - - - - - - - - - - Other - - - - - - - - - - - -->
     
     <!-- Colors -->

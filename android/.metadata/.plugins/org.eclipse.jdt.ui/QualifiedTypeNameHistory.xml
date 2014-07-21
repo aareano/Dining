@@ -8,4 +8,10 @@
 <fullyQualifiedTypeName name="java.util.concurrent.TimeUnit"/>
 <fullyQualifiedTypeName name="android.os.Handler"/>
 <fullyQualifiedTypeName name="valrae.tufts.dining.ServiceManager"/>
+<fullyQualifiedTypeName name="org.apache.http.params.HttpAbstractParamBean"/>
+<fullyQualifiedTypeName name="org.apache.http.protocol.HTTP"/>
+<fullyQualifiedTypeName name="org.apache.http.client.methods.HttpGet"/>
+<fullyQualifiedTypeName name="org.apache.http.client.methods.HttpPost"/>
+<fullyQualifiedTypeName name="java.lang.ref.WeakReference"/>
+<fullyQualifiedTypeName name="valrae.tufts.dining.R.string"/>
 </qualifiedTypeNameHistroy>

@@ -1,6 +1,7 @@
 package valrae.tufts.dining;
 
 import android.app.Activity;
+import android.content.res.Configuration;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
@@ -15,7 +16,7 @@ import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
 
 
-// TODO refresh on startup
+// TODO Orientation change FIX!
 
 
 public class MainActivity extends ActionBarActivity
@@ -126,7 +127,15 @@ public class MainActivity extends ActionBarActivity
         return super.onOptionsItemSelected(item);
     }
 
-    /**
+    /** 
+	 */
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		// called by configuration changes listed in manifest
+		super.onConfigurationChanged(newConfig);
+	}
+
+	/**
      * A placeholder fragment containing a simple view.
      */
     public static class PlaceholderFragment extends Fragment {
@@ -166,7 +175,7 @@ public class MainActivity extends ActionBarActivity
         }
     }
     
-/* ------------------------------- Button methods --------------------------------- */
+/* ------------------------- Button methods ------------------------- */
     
     /**
      * Called by the comparison fragment's buttons

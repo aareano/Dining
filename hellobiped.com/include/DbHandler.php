@@ -42,7 +42,7 @@ Class DbHandler {
 			$stmt->bind_param("ss", $timestamp, $mac);
 		
 		} elseif ($table == TBL_RATING) {
-			$stmt = $this->conn->prepare("SELECT * FROM rating c WHERE c.time_added >= ? AND HEX(c.mac_addr) = ?");
+			$stmt = $this->conn->prepare("SELECT * FROM rating r WHERE r.time_added >= ? AND HEX(r.mac_addr) = ?");
 			$stmt->bind_param("ss", $timestamp, $mac);
 		}
 
@@ -230,7 +230,7 @@ Class DbHandler {
 	 */
 	public function totalRatings ($timestamp) {
 
-		$stmt = $this->conn->prepare("SELECT dewick, carmichael FROM TBL_RATING r WHERE r.time_added >= ?");
+		$stmt = $this->conn->prepare("SELECT good, bad FROM rating r WHERE r.time_added >= ?");
 		$stmt->bind_param("s", $timestamp);
 
 		if (!$stmt)

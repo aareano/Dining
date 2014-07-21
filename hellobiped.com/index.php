@@ -184,8 +184,7 @@ $app->get('/tally_ratings', function() use ($app) {
 	date_default_timezone_set('UTC');
 	$timestamp = date('Y-m-d H:i:s', strtotime('-3 months'));
 	
-	$total_array = $db->totalVotes($timestamp);
-
+	$total_array = $db->totalRatings($timestamp);
 
 	if ($total_array != NULL) {
 		$response["error"] = false;

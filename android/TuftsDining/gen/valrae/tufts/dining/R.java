@@ -1310,11 +1310,17 @@ containing a value of this type.
         public static final int message_key=0x7f0a0028;
         public static final int navigation_drawer_close=0x7f0a000f;
         public static final int navigation_drawer_open=0x7f0a000e;
+        /**  - - - - - - - - - - - Toasts - - - - - - - - - - - 
+         */
+        public static final int no_data=0x7f0a002e;
+        public static final int no_post=0x7f0a002f;
         public static final int post_error_key=0x7f0a002b;
         public static final int post_message_key=0x7f0a002a;
+        public static final int process_canceled=0x7f0a0030;
         /**  Rating 
          */
         public static final int rating=0x7f0a001e;
+        public static final int recent_message=0x7f0a0031;
         public static final int reminder=0x7f0a0016;
         /**  - - - - - - - - - - - FRAGMENTS  - - - - - - - - - - - 
  Navigation 
@@ -1322,6 +1328,7 @@ containing a value of this type.
         public static final int title_comparison=0x7f0a0011;
         public static final int title_rating=0x7f0a0012;
         public static final int title_section3=0x7f0a0013;
+        public static final int too_recent=0x7f0a0032;
         public static final int underscore=0x7f0a001d;
         public static final int wrong=0x7f0a0017;
     }

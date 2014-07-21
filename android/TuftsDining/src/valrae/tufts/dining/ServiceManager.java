@@ -2,6 +2,7 @@ package valrae.tufts.dining;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.lang.ref.WeakReference;
 import java.util.List;
 
 import org.apache.http.HttpEntity;
@@ -15,17 +16,18 @@ import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
-import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import android.widget.Toast;
 
 public class ServiceManager {
 	
@@ -48,61 +50,184 @@ public class ServiceManager {
 	
 	private final String TAG = "ServiceManager";
 	
-	private String postJson;
-	private String getJson;
+	private static String mPostJson;
+	private static String mGetJson;
 	
 	private NetworkInfo networkInfo;
-	ProgressDialog pDialog;
-	private static boolean mStatus = false;
+	private ProgressDialog pDialog;
+	
+	private static RequestCompletedListener completionListener;
+	private Handler handler;
+	
+	private static class myHandler extends Handler {
+		private final WeakReference<ServiceManager> mTarget;
+		
+		public myHandler (ServiceManager target) {
+			mTarget = new WeakReference<ServiceManager>(target);
+		}
+		
+		@Override
+		public void handleMessage(Message msg) {
+			ServiceManager target = mTarget.get(); 
+            
+			if (target != null) {
+				switch (msg.what) {
+				case 0:
+					if (completionListener != null)
+						target.alertFragment(POST, mPostJson);
+					break;
+				case 1:
+					if (completionListener != null)
+						target.alertFragment(GET, mGetJson);
+					break;
+				default:
+					break;
+				}
+            }
+		}
+	};	
 	
 	/**
 	 * Creates new ServiceManager object
 	 * @param context of activity that this is working in
+	 * @param requestCompletedListener 
 	 * @param function is functionality of the activity that is using ServiceManager
 	 */
 	public ServiceManager (Context context, String functionality) {
 		Log.i(TAG, "new ServiceManager()");
-		// store activity context and ServiceManager function
+		
 		this.CONTEXT = context;
 		this.FUNCTIONALITY = functionality;
-		this.COMPARISON = CONTEXT.getResources().getString(R.string.comparison);
-		this.RATING = CONTEXT.getResources().getString(R.string.rating);
+		this.COMPARISON = ComparisonFragment.FUNCTIONALITY;
+		this.RATING = RatingFragment.FUNCTIONALITY;
+		this.handler = new myHandler(this);
+	}
+
+	/**
+	 * Checks for network connection
+	 * @return whether or not device has connection
+	 */
+	public boolean isConnected () {
 		
-		// get network information
 		ConnectivityManager connMgr = (ConnectivityManager) 
 				CONTEXT.getSystemService(Context.CONNECTIVITY_SERVICE);
 		networkInfo = connMgr.getActiveNetworkInfo();
-	}
-	
-	/**
-	 * Sends data to AsyncTask
-	 * @param data
-	 */
-	@SuppressWarnings("unchecked")
-	public void startService (List<NameValuePair> data) {
-		
-		// get mac address
-		String mac = getMacAddress();
-		data.add(new BasicNameValuePair(CONTEXT.getResources().getString(R.string.mac_key), 
-				mac));
-		
-		Log.i(TAG, "data in startService: " + data.toString());
 		
 		// check network status
 		if (networkInfo != null && networkInfo.isConnected()) {
-			new statService().execute(data);						// get data
+			return true;
 		} else {
 			Log.e(TAG, "No network connection available.");
-			Toast.makeText(CONTEXT, "No network connection available.", 
-					Toast.LENGTH_LONG).show(); 						// display error
-		}		
+			return false;
+		}
+	}
+	
+	public void postVote(final List<NameValuePair> data) {
+		data.add(new BasicNameValuePair(
+				CONTEXT.getResources().getString(R.string.mac_key), 
+				getMac()));
+		Log.i(TAG, "data in startService: " + data.toString());
+		
+		String message = "Making your voice heard...";
+		manageDialog(message);
+		
+		Thread thread = new Thread()
+		{
+			@Override
+			public void run() {
+				// make POST >> returns JSON response
+				if (FUNCTIONALITY.equals(COMPARISON)) {
+					mPostJson = makeServiceCall(VOTE_URL, POST, data);
+					Log.d("ServiceManager", FUNCTIONALITY + " POST response > " + mPostJson);
+				
+				} else if (FUNCTIONALITY.equals(RATING)) {
+					mPostJson = makeServiceCall(RATE_URL, POST, data);
+					Log.d("ServiceManager", FUNCTIONALITY + " POST response > " + mPostJson);
+				}
+				handler.sendEmptyMessage(0);
+
+				// TODO
+//				handler.post(new Runnable() {
+//					@Override
+//					public void run() {
+//						progressBar.setProgress(prog);
+//					}
+//				});
+			}				
+		};
+		thread.start();
+		try {
+			thread.join();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void getTally() {
+		String message = "Fetching numbers...";
+		manageDialog(message);
+
+		Thread thread = new Thread()
+		{
+			@Override
+			public void run() {
+				// make GET >> returns JSON response
+				if (FUNCTIONALITY.equals(COMPARISON)) {									
+					mGetJson = makeServiceCall(TALLY_VOTES_URL, GET);
+					Log.d("ServiceManager", FUNCTIONALITY + " GET response > " + mGetJson);
+				
+				} else if (FUNCTIONALITY.equals(RATING)) {
+					mGetJson = makeServiceCall(TALLY_RATINGS_URL, GET);
+					Log.d("ServiceManager", FUNCTIONALITY + " GET response > " + mGetJson);
+				}
+				handler.sendEmptyMessage(1);
+			}	   
+		};
+		thread.start();
+		try {
+			thread.join();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/* ------------------------- Dialog methods ------------------------- */
+	
+	/**
+	 * Ensures a ProgressDialog is showing and shows message
+	 * @param message to show on ProgressDialog
+	 */
+	public void manageDialog (String message) {
+		if (pDialog == null) {
+			pDialog = new ProgressDialog(CONTEXT);
+			pDialog.setOnCancelListener(new OnCancelListener() {
+
+				@Override
+				public void onCancel(DialogInterface arg0) {
+					Log.i(TAG, "ProgressDialog canceled");
+					cancelAlert();
+				}
+				
+			});
+		}
+		pDialog.setMessage(message);
+		if (!pDialog.isShowing()) {
+			pDialog.setCancelable(true);
+			pDialog.setCanceledOnTouchOutside(true);
+			pDialog.show();
+		}
 	}
 	
 	/**
-	 * Get device MAC address
-	 * @return MAC address
+	 * Closes an open ProgressDialog
 	 */
-	public String getMacAddress() {
+	public void close() {
+		if (pDialog != null && pDialog.isShowing()) {
+			pDialog.dismiss();
+		}
+	}
+
+	public String getMac() {
 		
 		WifiManager manager = (WifiManager) CONTEXT.getSystemService(Context.WIFI_SERVICE);
 		String address = null;
@@ -120,91 +245,11 @@ public class ServiceManager {
 			// WIFI IS NOW ENABLED. GRAB THE MAC ADDRESS HERE
 			WifiInfo info = manager.getConnectionInfo();
 			address = info.getMacAddress();
-		}		
-		
-		Log.d("Mac Address:", "mac address:" + address);
+		}
 		return address; 
 	}
 	
-	/**
-	 * AsyncTask to get JSON containing desired statistics by making HTTP requests
-	 * */
-	protected class statService extends AsyncTask <List<NameValuePair>, Void, String[]> {
-
-		@Override
-		protected void onPreExecute() {
-			super.onPreExecute();
-			Log.d(TAG, "onPreExecute");
-			// Showing progress dialog
-			pDialog = new ProgressDialog(CONTEXT);
-			pDialog.setMessage("Fetching numbers...");
-			pDialog.setCancelable(false);
-			pDialog.show();
-		}
-		
-		/* Order of params[0] is: {dewick, carm, mac} */
-		@Override
-		protected String[] doInBackground(List<NameValuePair>... params) {
-			Log.d(TAG, "doInBackground");
-			
-			String postJson = null;
-			String getJson = null;
-			
-			if (FUNCTIONALITY.equals(COMPARISON)) {
-				// make POST >> returns JSON response
-				postJson = makeServiceCall(VOTE_URL, POST, params[0]);
-				Log.d("ServiceManager", FUNCTIONALITY + " POST response > " + postJson);
-			
-				// make GET >> returns JSON response
-				getJson = makeServiceCall(TALLY_VOTES_URL, GET);
-				Log.d("ServiceManager", FUNCTIONALITY + " GET response > " + getJson);
-				
-			} else if (FUNCTIONALITY.equals(RATING)) {
-				// make POST >> returns JSON response
-				postJson = makeServiceCall(RATE_URL, POST, params[0]);
-				Log.d("ServiceManager", FUNCTIONALITY + " POST response > " + postJson);
-			
-				// make GET >> returns JSON response
-				getJson = makeServiceCall(TALLY_RATINGS_URL, GET);
-				Log.d("ServiceManager", FUNCTIONALITY + " GET response > " + getJson);
-			}
-			String jsonResponses[] = {postJson, getJson};
-			return jsonResponses;
-		}
- 
-		@Override
-		protected void onPostExecute(String jsonResponses[]) {
-			super.onPostExecute(jsonResponses);
-			Log.d(TAG, "onPostExecute");
-			
-			// Dismiss the progress dialog
-			if (pDialog.isShowing())
-				pDialog.dismiss();
-			
-			// store JSON strings in member variables
-			postJson = jsonResponses[0];
-			getJson  = jsonResponses[1];
-			
-			myHandler.sendEmptyMessage(0);
-		}
-	}
-	
-	// not sure why I'm using a handler...
-	private final static Handler myHandler = new Handler() {
-
-		@Override
-		public void handleMessage(Message msg) {
-			switch (msg.what) {
-			case 0:
-				// calling to this function from other pleaces
-				// The notice call method of doing things
-				mStatus = true;
-				break;
-			default:
-				break;
-			}
-		}
-	};
+	/* ------------------------- Service methods ------------------------- */
 	
 	/**
 	 * Making service call
@@ -270,19 +315,28 @@ public class ServiceManager {
 		return response;
 	}
 	
+	/* -------------------------- Callback method -------------------------- */
+	public void setRequestCompleteListener(RequestCompletedListener listener) {
+		completionListener = listener;
+	}
+	
+	public void alertFragment(String method, String json) {
+		completionListener.onComplete(method, json);
+	}
+	
+	public void cancelAlert() {
+		completionListener.onCancel();
+	}
+	
 	/* -------------------------- Getter methods -------------------------- */
 	
 	// get POST results
 	public String getPOSTJson() {
-		return postJson;
+		return mPostJson;
 	}
 	
 	// get GET results
 	public String getGETJson() {
-		return getJson;
-	}
-
-	public static boolean getStatus() {
-		return mStatus;
+		return mGetJson;
 	}
 }
