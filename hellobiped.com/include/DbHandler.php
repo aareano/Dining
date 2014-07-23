@@ -20,151 +20,360 @@ Class DbHandler {
 		$this->conn = $db->connect();
 	}
 
-
 	/**
 	 * Determines if an entry will be allowed for this user
-	 *
 	 * @param $mac MAC address of the user
 	 * @param $timestamp latest time for this ip to have voted last
-	 *
 	 * @return whther or not $mac has made an entry since $timestamp
-	 *
-	 *
-	 * if I ever need a getUsersVotes($ipv4), this is pretty much that
 	 */
-	function isRecent($mac, $timestamp, $table) {
+	function isRecent($mac, $timestamp, $table) {		// TODO, only uses MAC address right now
 
-		// echo("votes after ".$timestamp."?");
-		// base_convert($int, 10, 16);
+		$query = "SELECT votes.* FROM user_venue_votes votes, users WHERE HEX(users.mac_addr) == ? "
+				." AND users.id == votes.user_id AND votes.time_added >= ?"
+		$stmt->bind_param("ss", $mac, $timestamp);
 
-		if ($table == TBL_COMPARISON) {
-			$stmt = $this->conn->prepare("SELECT * FROM comparison c WHERE c.time_added >= ? AND HEX(c.mac_addr) = ?");
-			$stmt->bind_param("ss", $timestamp, $mac);
-		
-		} elseif ($table == TBL_RATING) {
-			$stmt = $this->conn->prepare("SELECT * FROM rating r WHERE r.time_added >= ? AND HEX(r.mac_addr) = ?");
-			$stmt->bind_param("ss", $timestamp, $mac);
-		}
-
-		// if preparation and binding were successful...
+		// if binding was successful...
 		if ($stmt != false) {
-
 			$stmt->execute();
-			$stmt->store_result();
+			// $stmt->store_result();								// TODO, do I need this?
         	$num_rows = $stmt->num_rows;
         	$stmt->close();
         	return $num_rows > 0;
-
-        // something is wrong, so don't allow anything to be posted.
-        } else
+        
+        } else 	// something is wrong, so don't allow anything to be posted.
         	return true;
 	}
 
 
 
-	/* --------------------- `comparison` table methods --------------------- */
+	/**
+	 * @param
+	 * @return
+	 */
+	function () {}
+
+
+
+/* -------------------------- `users` table methods -------------------------- */
+	
+	/* ------ Crud ------ */
+	/**
+	 * Creates a user. Users have an id, MAC, ipv4, ipv6, and a date_added
+	 * @param $user holds {MAC, ipv4, ipv6}
+	 * @return true if successful, false otherwise
+	 */
+	function createUser($user) {
+
+	}
+
+	function createUser($mac, ipv4) {
+		// TODO create array with null values, call createUser($user)
+	}
+
+	function createUser($mac) {
+		// TODO create array with null values, call createUser($user)
+	}
+
+	/* ------ cRud ------ */
+	/**
+	 * @param $user holds {MAC, ipv4, ipv6}
+	 * @return User that satisfies all parameters
+	 */
+	function getUser($user) {
+
+	}
 
 	/**
-	 * Creating a comparison
-	 * @param $mac MAC address of device
-	 * @param $dewick vote for dewick
-	 * @param $carm vote for carm
+	 * @return Users created after $timestamp
+	 */
+	function getUser($mac) {
+
+	}
+
+	/**
+	 * @return Users created BEFORE $timestamp
+	 */
+	function getUsersBefore($timestamp) {
+
+	}
+
+	/**
+	 * @return Users created AFTER $timestamp
+	 */
+	function getUsersAfter($timestamp) {
+
+	}
+
+	/**
+	 * @return All users in database
+	 */
+	function getAllUsers() {
+
+	}
+
+	/* ------ crUd ------ */
+	/**
+	 * @param $field is string name of db column
+	 * @param $value is the replacement value
+	 * @return true if successful, otherwise false
+	 */
+	function updateUser($mac, $field, $value) {
+
+	}
+
+	/* ------ cruD ------ */
+	/**
+	 * @return true if successful, otherwise false
+	 */
+	function deleteUser($mac) {
+
+	}
+	/**
+	 * @param Users created BEFORE $timestamp
+	 * @return true if successful, otherwise false
+	 */
+	function deleteUserssBefore($timestamp) {
+
+	}
+
+	/**
+	 * @param Users created AFTER $timestamp
+	 * @return true if successful, otherwise false
+	 */
+	function deleteUserBefore($timestamp) {
+
+	}
+
+/* -------------------------- `venues` table methods -------------------------- */
+	/* ------ Crud ------ */
+	/**
+	 * @param $venue includes {name, class}
+	 * @return true if successful, otherwise false
+	 */
+	function createVenue($venue) {
+
+	}
+
+	/* ------ cRud ------ */
+	/**
+	 * @return venue with correct name in array form
+	 */
+	function getVenue($name) {
+
+	}
+
+	/**
+	 * @return venues of correct class in array form
+	 */
+	function getVenues($class) {
+
+	}
+
+	/* ------ crUd ------ */
+	/**
+	 * @param $field is string name of db column
+	 * @param $value is the replacement value
+	 * @return true if successful, otherwise false
+	 */
+	function updateVenue($name, $field, $value) {
+
+	}
+
+	/* ------ cruD ------ */
+	/**
+	 * @return true if successful, otherwise false
+	 */
+	function deleteVenue($name) {		// TODO I wonder if the $field, $value would work for a lot more functions like this one....
+
+	}
+
+/* -------------------------- `foods` table methods -------------------------- */
+	/* ------ Crud ------ */
+	/**
+	 * @param $food includes {name, class}
+	 * @return true if successful, otherwise false
+	 */
+	function createFood($food) {
+
+	}
+
+	/* ------ cRud ------ */
+	/**
+	 * @return food with correct name in array form
+	 */
+	function getFood($name) {
+
+	}
+
+	/**
+	 * @return foods of correct class in array form
+	 */
+	function getFoods($class) {
+
+	}
+
+	/* ------ crUd ------ */
+	/**
+	 * @param $field is string name of db column
+	 * @param $value is the replacement value
+	 * @return true if successful, otherwise false
+	 */
+	function updateFood($name, $field, $value) {
+
+	}
+
+	/* ------ cruD ------ */
+	/**
+	 * @return true if successful, otherwise false
+	 */
+	function deleteFood($name) {
+
+	}
+
+/* -------------------------- `venue_vote_types` table methods -------------------------- */
+	/* ------ Crud ------ */
+	/**
+	 * @param $type includes {name, value}
+	 * @return true if successful, otherwise false
+	 */
+	function createVenueVoteType($type) {
+
+	}
+
+	/* ------ cRud ------ */
+	/**
+	 * @return venueVoteType with correct name in array form
+	 */
+	function getVenueVoteType($name) {
+
+	}
+
+	/* ------ crUd ------ */
+	/**
+	 * @param $field is string name of db column
+	 * @param $value is the replacement value
+	 * @return true if successful, otherwise false
+	 */
+	function updateVenueVoteType($name, $field, $value) {
+
+	}
+
+	/* ------ cruD ------ */
+	/**
+	 * @return true if successful, otherwise false
+	 */
+	function deleteVenueVoteType($name) {
+
+	}
+
+/* -------------------------- `food_vote_types` table methods -------------------------- */
+
+	/* ------ Crud ------ */
+	/**
+	 * @param $type includes {name, value}
+	 * @return true if successful, otherwise false
+	 */
+	function createFoodVoteType($type) {
+
+	}
+
+	/* ------ cRud ------ */
+	/**
+	 * @return foodVoteType with correct name in array form
+	 */
+	function getFoodVoteType($name) {
+
+	}
+
+	/* ------ crUd ------ */
+	/**
+	 * @param $field is string name of db column
+	 * @param $value is the replacement value
+	 * @return true if successful, otherwise false
+	 */
+	function updateFoodVoteType($name, $field, $value) {
+
+	}
+
+	/* ------ cruD ------ */
+	/**
+	 * @return true if successful, otherwise false
+	 */
+	function deleteFoodVoteType($name) {
+
+	}
+
+/* -------------------------- `user_venue_votes` table methods -------------------------- */
+	/* ------ Crud ------ */
+	/**
+	 * Creates a vote >> an entry that matches all necessary chunks of data.
+	 * Without all parts, the vote (or entry) is not meaningful.
+	 * @param all the params needed for a complete entry
+	 * @return true if successful, otherwise false
+	 */
+	function createVenueVote($userId, $venueId, $venueVoteId) {
+
+	}
+
+	/* ------ cRud ------ */
+	/**
 	 *
-	 * @return mysql table id number
 	 */
-	public function postVote ($mac, $dewick, $carm) {
-		date_default_timezone_set('UTC');
-		$now = date('Y-m-d H:i:s');
+	function isRecent() {}
 
-		// convert to int
-		$mac = base_convert($mac, 16, 10);
+	function getVotes($venueId) {}
 
-		// Create the table if it doesn't exist
-		// not sure when this would be needed. I guess I just feel cool being "ROBUST!"
-		// hard code table name
-		$create = "CREATE TABLE IF NOT EXISTS `comparison` (
- 						`id` int(20) unsigned NOT NULL AUTO_INCREMENT,
- 						`dewick` int(1) unsigned NOT NULL DEFAULT '0',
-						`carmichael` int(1) unsigned NOT NULL DEFAULT '0',
-						`time_added` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-						`mac_addr` bigint(6) unsigned DEFAULT NULL,
-						 PRIMARY KEY (`id`)) 
-						 ENGINE=MyISAM AUTO_INCREMENT=110 DEFAULT CHARSET=utf8";
+	function getVotes($userId) {}
 
-		$stmt = $this->conn->prepare($create);
-		if ($stmt != false) {
-			$stmt->execute();
-			$stmt->close();
-		}
+	function getUsers($venueId) {}
 
-		// INSERT statement
-		$insert = "INSERT INTO `comparison` (dewick, carmichael, time_added, mac_addr) 
-						VALUES (?, ?, ?, ?)";
-		$stmt = $this->conn->prepare($insert);
-		$stmt->bind_param("sssi", $dewick, $carm, $now, $mac);
+	function getPositiveVotes($venueId) {}
 
-		if (!$stmt)
-			return false;
+	function getNegativeVotes($venueId) {}
 
-		if ($stmt->execute()) {
-			
-			// vote now entered
-			$stmt->close();
-			return true;
+	/* ------ crUd ------ */
+	// will fill this out as needed
 
-		} else {
+	/* ------ cruD ------ */
+	// will fill this out as needed
 
-			// some error happened
-			$stmt->close();
-			return false;
-		}
-	}
-
+/* -------------------------- `user_food_votes` table methods -------------------------- */
+	/* ------ Crud ------ */
 	/**
-	 * Gets a total number of votes for dewick or carm
-	 * @param ealiest MySql TIMESTAMP to accept
-	 * @return an array of votes for 'dewick' and 'carm'
+	 * Creates a vote >> an entry that matches all necessary chunks of data.
+	 * Without all parts, the vote (or entry) is not meaningful.
+	 * @param all the params needed for a complete entry
+	 * @return true if successful, otherwise false
 	 */
+	function createFoodVote($userId, $foodId, $foodVoteId) {
 
-	public function totalVotes ($timestamp) {
-
-		$stmt = $this->conn->prepare("SELECT dewick, carmichael FROM comparison c WHERE c.time_added >= ?");
-		$stmt->bind_param("s", $timestamp);
-
-		if (!$stmt)
-			return NULL;
-		
-		$stmt->execute();
-
-		// bind result variables
-		$stmt->bind_result($dewick, $carm);
-
-		// inititate counters
-		$sum_d = 0;
-		$sum_c = 0;
-
-		// fetch variables
-		while ($row = $stmt->fetch()) {
-			
-			if ($dewick != 0) {
-				
-				$sum_d++;		// each entry only represents 1 vote
-
-			} else if ($carm != 0) {
-				
-				$sum_c++;
-			}
-		}
-
-		$stmt->close();
-		
-		return array("dewick" => $sum_d, "carm" => $sum_c); 
 	}
+
+	/* ------ cRud ------ */
+	/**
+	 *
+	 */
+	function isRecent() {}
+
+	function getVotes($foodId) {}
+
+	function getVotes($userId) {}
+
+	function getUsers($foodId) {}
+
+	function getPositiveVotes($foodId) {}
+
+	function getNegativeVotes($foodId) {}
+
+	/* ------ crUd ------ */
+	// will fill this out as needed
+
+	/* ------ cruD ------ */
+	// will fill this out as needed
 
 
 
 /* -------------------------- `rating` table methods -------------------------- */
-
 
 	/**
 	 * Creating a comparison
