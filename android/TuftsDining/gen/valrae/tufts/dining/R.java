@@ -16,6 +16,9 @@ public final class R {
         public static final int abc_slide_out_bottom=0x7f040004;
         public static final int abc_slide_out_top=0x7f040005;
     }
+    public static final class array {
+        public static final int venues_array=0x7f0c0000;
+    }
     public static final class attr {
         /**  Custom divider drawable to use for elements in the action bar. 
          <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
@@ -1101,11 +1104,11 @@ containing a value of this type.
         public static final int action_bar_subtitle=0x7f050023;
         public static final int action_bar_title=0x7f050022;
         public static final int action_context_bar=0x7f05001d;
-        public static final int action_example=0x7f05004e;
         public static final int action_menu_divider=0x7f050016;
         public static final int action_menu_presenter=0x7f050017;
         public static final int action_mode_close_button=0x7f050024;
         public static final int action_settings=0x7f05004d;
+        public static final int action_venue=0x7f05004e;
         public static final int activity_chooser_view_content=0x7f050025;
         public static final int always=0x7f05000b;
         public static final int bad_counter=0x7f05004c;
@@ -1231,8 +1234,9 @@ containing a value of this type.
         public static final int support_simple_spinner_dropdown_item=0x7f03001d;
     }
     public static final class menu {
-        public static final int global=0x7f0c0000;
-        public static final int main=0x7f0c0001;
+        public static final int global=0x7f0d0000;
+        public static final int main=0x7f0d0001;
+        public static final int rating=0x7f0d0002;
     }
     public static final class string {
         /**  Content description for the action bar "home" affordance. [CHAR LIMIT=NONE] 
@@ -1277,6 +1281,9 @@ containing a value of this type.
         public static final int abc_shareactionprovider_share_with_application=0x7f0a000b;
         public static final int action_example=0x7f0a0010;
         public static final int action_settings=0x7f0a0014;
+        /**  - - - - - - - - - - - Menus - - - - - - - - - - - 
+         */
+        public static final int action_venue=0x7f0a0033;
         /**  App Stuff 
          */
         public static final int app_name=0x7f0a000d;
@@ -1310,10 +1317,12 @@ containing a value of this type.
         public static final int message_key=0x7f0a0028;
         public static final int navigation_drawer_close=0x7f0a000f;
         public static final int navigation_drawer_open=0x7f0a000e;
+        public static final int negative_button=0x7f0a0036;
         /**  - - - - - - - - - - - Toasts - - - - - - - - - - - 
          */
         public static final int no_data=0x7f0a002e;
         public static final int no_post=0x7f0a002f;
+        public static final int positive_button=0x7f0a0035;
         public static final int post_error_key=0x7f0a002b;
         public static final int post_message_key=0x7f0a002a;
         public static final int process_canceled=0x7f0a0030;
@@ -1330,6 +1339,9 @@ containing a value of this type.
         public static final int title_section3=0x7f0a0013;
         public static final int too_recent=0x7f0a0032;
         public static final int underscore=0x7f0a001d;
+        /**  - - - - - - - - - - - Dialogs - - - - - - - - - - - 
+         */
+        public static final int venue_dialog=0x7f0a0034;
         public static final int wrong=0x7f0a0017;
     }
     public static final class style {

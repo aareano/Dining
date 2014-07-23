@@ -1,5 +1,6 @@
 package valrae.tufts.dining;
 
+import valrae.tufts.dining.VenueDialogFragment.VenueDialogListener;
 import android.app.Activity;
 import android.content.res.Configuration;
 import android.support.v7.app.ActionBarActivity;
@@ -16,11 +17,13 @@ import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
 
 
-// TODO Orientation change FIX!
+// Orientation change - fixed?
+// current - VenueDialogFragment
+// TODO, create call back to check is drawer is open for options menu.
 
 
 public class MainActivity extends ActionBarActivity
-        implements NavigationDrawerFragment.NavigationDrawerCallbacks {
+        implements NavigationDrawerFragment.NavigationDrawerCallbacks, VenueDialogListener {
 	
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -58,18 +61,21 @@ public class MainActivity extends ActionBarActivity
         FragmentTransaction fTrans = fragmentManager.beginTransaction();
 
         switch (sectionNum) {
-        case 0:		// comparison
-        	mComparisonFragment = ComparisonFragment.newInstance(this);
-        	fTrans.replace(R.id.container, mComparisonFragment)
-        		  .commit();
-            break;
-        case 1:		// rating
+        case 0:		// rating
         	mRatingFragment = RatingFragment.newInstance(this);
         	fTrans.replace(R.id.container, mRatingFragment)
-  		  		  .commit();
+        	.commit();
             break;
-        case 2:	// default >> PlaceHolderFragment
-    		fTrans.replace(R.id.container, PlaceholderFragment.newInstance(position))
+        case 1:		// comparison
+        	mComparisonFragment = ComparisonFragment.newInstance(this);
+        	fTrans.replace(R.id.container, mComparisonFragment)
+        	.commit();
+            break;
+        case 2:		// where to eat? 
+//        	mWhereToFragment = WhereToFragment.newInstance(this);	// TODO
+//        	fTrans.replace(R.id.container, mWhereToFragment)
+//        	.commit();
+        	fTrans.replace(R.id.container, PlaceholderFragment.newInstance(position))
     			  .commit();
         	break;
     	default:	// default >> PlaceHolderFragment
@@ -83,10 +89,10 @@ public class MainActivity extends ActionBarActivity
     public void onSectionAttached(int number) {
         switch (number) {
             case 1:
-                mTitle = getString(R.string.title_comparison);
+            	mTitle = getString(R.string.title_rating);
                 break;
             case 2:
-                mTitle = getString(R.string.title_rating);
+            	mTitle = getString(R.string.title_comparison);
                 break;
             case 3:
                 mTitle = getString(R.string.title_section3);
@@ -191,6 +197,20 @@ public class MainActivity extends ActionBarActivity
      */
     public void onClickRating (View button) {
     	mRatingFragment.onClick(button);
+	}
+    
+    /* ------------------------- Callback methods ------------------------- */
+
+    // pass these calls along to RatingFragment
+	@Override
+	public void onSelectionMade(int which) {
+		mRatingFragment.onSelectionMade(which);
+		
+	}
+
+	@Override
+	public void onDialogNegativeClick() {
+		mRatingFragment.onDialogNegativeClick();
 	}
     
 }

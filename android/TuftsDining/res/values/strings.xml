@@ -60,6 +60,14 @@
 	<string name="too_recent">No vote! You\'ve voted too recently.</string>
     
     
+	<!-- - - - - - - - - - - - Menus - - - - - - - - - - - -->
+	<string name="action_venue">Select venue</string>
+	
+	<!-- - - - - - - - - - - - Dialogs - - - - - - - - - - - -->
+	<string name="venue_dialog">Select venue</string>
+	<string name="positive_button">OK</string>
+	<string name="negative_button">Cancel</string>
+	
     <!-- - - - - - - - - - - - Other - - - - - - - - - - - -->
     
     <!-- Colors -->
