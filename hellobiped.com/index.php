@@ -51,10 +51,8 @@ $app->post('/rate', function() use ($app) {
 	// vote fields
 	$vote_name = $app->request->post('vote_name');
 	
-	// remove colons from mac address
-	$mac = str_replace(":", "", $mac);
 	$user = [
-		"mac_addr" => $mac,
+		"mac" => $mac,
 		"ipv4" => $ipv4;
 		"ipv6" => $ipv6;
 	]
