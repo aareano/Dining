@@ -31,24 +31,25 @@ define('TBL_VENUES', 'venues');
 	define('CLASS_DINING_HALL', 'dining_hall');
 	define('CLASS_DINING_HALL', 'take-out');
 
-define('TBL_FOODS', 'foods');
+define('TBL_RECIPES', 'recipes');
 	define('CLASS_ENTREE', 'entree');
 
 
 define('TBL_VENUE_VOTE_TYPES', 'venue_vote_types');
-define('TBL_FOOD_VOTE_TYPES', 'food_vote_types');
+define('TBL_RECIPE_VOTE_TYPES', 'recipe_vote_types');
 	define('FIELD_VALUE', 'value');
-	define('NAME_VENUE_VOTE_POS', 'positive');
-	define('NAME_VENUE_VOTE_NEG', 'negative');
+	define('VOTE_NAME', 'vote_name');
+	define('VENUE_VOTE_POS', 'positive');		// CHANGED FROM NAME_VENUE... WASN'T CHANGED IN DBHANDLER
+	define('VENUE_VOTE_NEG', 'negative');
 
 define('TBL_USER_VENUE_VOTES', 'user_venue_votes');
 	define('FIELD_USER_ID', 'user_id');
 	define('FIELD_VENUE_ID', 'venue_id');
 	define('FIELD_VENUE_VOTE_ID', 'venue_vote_id');
 
-define('TBL_USER_FOOD_VOTES', 'user_food_votes');	
-	define('FIELD_FOOD_ID', 'food_id');
-	define('FIELD_FOOD_VOTE_ID', 'food_vote_id');
+define('TBL_USER_RECIPE_VOTES', 'user_recipe_votes');	
+	define('FIELD_RECIPE_ID', 'recipe_id');
+	define('FIELD_RECIPE_VOTE_ID', 'recipe_vote_id');
 
 
 // Boolean constants
