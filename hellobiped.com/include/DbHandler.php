@@ -11,9 +11,9 @@
 * Notes on class:
 *	limit frequency of votes only for venue votes, not recipe votes
 *																														TODOs
-*																															CHECK create if statements for every $stmt
-*																															clean up PHPDoc
-*																															CHECK complete createIfNotExists()
+*																															CHECK -	create if statements for every $stmt
+*																															ONGOING	clean up PHPDoc
+*																															CHECK -	complete createIfNotExists()
 *																															look for methods that aren't needed or don't make sense
 *																															change $name to $venueName or $recipeName
 *																															time createIfNotExists(), is it worth having for every func?
@@ -39,7 +39,7 @@ Class DbHandler {
 	/**
 	 * Creates appropriate table if it doesn't exist.
 	 * @param String $tableName
-	 * @return true on success or false on failure
+	 * @return true if successful, false on failure
 	 */
 	function createIfNotExists($tableName) {
 		$mysql = NULL;
@@ -127,7 +127,7 @@ Class DbHandler {
 	/**
 	 * Creates a user
 	 * @param String $mac, String $ipv4, String $ipv6
-	 * @return true on success, false on failure
+	 * @return true if successful, false on failure
 	 */
 	function createUser($mac, $ipv4, $ipv6) {
 		createIfNotExists(TBL_USERS);
@@ -151,7 +151,7 @@ Class DbHandler {
 	/**
 	 * Gets users with mac address
 	 * @param String $mac, in human-readable form
-	 * @return user array or false on failure
+	 * @return user assoc array, false on failure
 	 */
 	function getUser($mac) {
 		createIfNotExists(TBL_USERS);
@@ -182,7 +182,7 @@ Class DbHandler {
 	/**
 	 * Gets users with date_added field before $timestamp
 	 * @param String $timestamp, in form 'Y-m-d H:i:s'
-	 * @return array of users or false on failure
+	 * @return array of assoc user arrays, false on failure
 	 */
 	function getUsersBefore($timestamp) {
 		createIfNotExists(TBL_USERS);
@@ -217,7 +217,7 @@ Class DbHandler {
 	/**
 	 * Gets users with date_added after $timestamp 
 	 * @param String $timestamp, in from 'Y-m-d H:i:s'
-	 * @return array of user arrays or false on failure
+	 * @return array of assoc user arrays, false on failure
 	 */
 	function getUsersAfter($timestamp) {
 		createIfNotExists(TBL_USERS);
@@ -251,7 +251,7 @@ Class DbHandler {
 
 	/**
 	 * Gets number of users in database
-	 * @return int or false on failure
+	 * @return int number of users, false on failure
 	 */
 	function getNumOfUsers() {
 		createIfNotExists(TBL_USERS);
@@ -273,7 +273,7 @@ Class DbHandler {
 
 	/**
 	 * Gets all users in database
-	 * @return array of user arrays or false on failure
+	 * @return array of user arrays false on failure
 	 */
 	function getAllUsers() {
 		createIfNotExists(TBL_USERS);
@@ -306,11 +306,11 @@ Class DbHandler {
 
 	/* ------ crUd ------ */
 	/**
-	 * Updates a specific field of a user
+	 * Updates a specific field of a user in db
 	 * @param String $mac, human-readable mac address
 	 * @param String $field, the database field to update
 	 * @param String $value, the replacement value
-	 * @return number of rows affected or false on failure
+	 * @return number of rows affected false on failure
 	 */
 	function updateUser($mac, $field, $value) {
 		createIfNotExists(TBL_USERS);
@@ -337,8 +337,8 @@ Class DbHandler {
 	/* ------ cruD ------ */
 	/**
 	 * Deletes user from database
-	 * @param $mac, human-readable mac addres
-	 * @return number of rows affected, or false on failure
+	 * @param String $mac, human-readable mac addres
+	 * @return int number of rows affected, false on failure
 	 */
 	function deleteUser($mac) {
 		createIfNotExists(TBL_USERS);
@@ -360,16 +360,16 @@ Class DbHandler {
 	/**
 	 * Deletes users with date_added field BEFORE $timestamp
 	 * @param String $timestamp, in form 'Y-m-d H:i:s'
-	 * @return true if successful, or false on failure
+	 * @return true if successful, false on failure
 	 */
-	function deleteUserssBefore($timestamp) {
+	function deleteUsersBefore($timestamp) {
 		// TODO...
 	}
 
 	/**
 	 * Deletes users with date_added field AFTER $timestamp
 	 * @param String $timestamp, in form 'Y-m-d H:i:s'
-	 * @return true if successful, or false on failure
+	 * @return true if successful, false on failure
 	 */
 	function deleteUserAfter($timestamp) {
 		// TODO...
@@ -379,17 +379,17 @@ Class DbHandler {
 	/* ------ Crud ------ */
 	/**
 	 * Creates a venue
-	 * @param $name, venue name
-	 * @param $class, venue class
-	 * @return true if successful, or false on failure
+	 * @param String $venueName
+	 * @param String $class
+	 * @return true if successful, false on failure
 	 */
-	function createVenue($name, $class) {
+	function createVenue($venueName, $class) {
 		createIfNotExists(TBL_VENUES);
 
 		// remaining fields of id and date_added will be automatically filled in
 		$mysql = "INSERT INTO ". TBL_VENUES ." (". FIELD_NAME .", ". FIELD_CLASS .") VALUES (?, ?)";
 		$stmt->$this->conn->prepare($mysql);
-		$stmt->bind_param("ss", $name, $class);
+		$stmt->bind_param("ss", $venueName, $class);
 		
 		if ($stmt != false) {
 			$stmt->execute();
@@ -405,15 +405,15 @@ Class DbHandler {
 	/* ------ cRud ------ */
 	/**
 	 * Gets venues with name
-	 * @param String $name, venue name
-	 * @return venue array or false on failure
+	 * @param String $venueName
+	 * @return venue assoc array, false on failure
 	 */
-	function getVenue($name) {
+	function getVenue($venueName) {
 		createIfNotExists(TBL_VENUES);
 		
 		$mysql = "SELECT * FROM ". TBL_VENUES ." WHERE ". FIELD_NAME ." = ?");
 		$stmt->$this->conn->prepare($mysql);
-		$stmt->bind_param("s", $name);
+		$stmt->bind_param("s", $venueName);
 		
 		if ($stmt != false) {
 			$stmt->execute();
@@ -435,8 +435,8 @@ Class DbHandler {
 
 	/**
 	 * Gets venues of a given class
-	 * @param String $class, venue class
-	 * @return array of venue arrays or false on failure
+	 * @param String $class
+	 * @return array of assoc venue arrays, false on failure
 	 */
 	function getVenues($class) {
 		createIfNotExists(TBL_VENUES);
@@ -463,22 +463,22 @@ Class DbHandler {
 
 			return $venues;
         } else 	// something is wrong
-        	return SENTINEL;
+        	return SENTINEL;														// probably not needed
 	}
 
 	/* ------ crUd ------ */
 	/**
-	 * Update a certain field of avenue
-	 * @param $field is string name of db column
-	 * @param $value is the replacement value
-	 * @return Number of rows affected
+	 * Update a certain field of a venue
+	 * @param String $field - db field
+	 * @param String $value - updated value
+	 * @return int number of rows affected, false on failure
 	 */
-	function updateVenue($name, $field, $value) {
+	function updateVenue($venueName, $field, $value) {
 		createIfNotExists(TBL_VENUES);
 
 		$mysql = "UPDATE ". TBL_VENUES ." SET ". $field ." = ? WHERE ". FIELD_NAME ." = ?";
 		$stmt->$this->conn->prepare($mysql);
-		$stmt->bind_param("ss", $value, $name);
+		$stmt->bind_param("ss", $value, $venueName);
 		
 		if ($stmt != false) {
 			$stmt->execute();
@@ -493,14 +493,16 @@ Class DbHandler {
 
 	/* ------ cruD ------ */
 	/**
-	 * @return Number of rows affected
+	 * Deletes a venue from db
+	 * @param String $venueName
+	 * @return int number of rows affected, false on failure
 	 */
-	function deleteVenue($name) {		// TODO I wonder if the $field, $value would work for a lot more functions like this one...
+	function deleteVenue($venueName) {		// TODO I wonder if the $field, $value would work for a lot more functions like this one...
 		createIfNotExists(TBL_VENUES);	// answer: yes, it would. but we really don't need flexibility like that.
 
 		$mysql = "DELETE FROM ". TBL_VENUES ." WHERE ". FIELD_NAME ." = ?";
 		$stmt->$this->conn->prepare($mysql);
-		$stmt->bind_param("s", $name);
+		$stmt->bind_param("s", $venueName);
 		
 		if ($stmt != false) {
 			$stmt->execute();
@@ -516,15 +518,17 @@ Class DbHandler {
 /* -------------------------- `recipes` table methods -------------------------- */
 	/* ------ Crud ------ */
 	/**
-	 * @param $recipe includes {name, class}
-	 * @return true if successful, otherwise false
+	 * Inserts a recipe into db
+	 * @param String $recipeName
+	 * @param String $class
+	 * @return true if successful, false on failure
 	 */
-	function createFood($recipe) {
+	function createRecipe($recipeName, $class) {
 		createIfNotExists(TBL_RECIPES);
 		// remaining fields of id and date_added will be automatically filled in
 		$mysql = "INSERT INTO ". TBL_RECIPES ." (". FIELD_NAME .", ". FIELD_CLASS .") VALUES (?, ?)";
 		$stmt->$this->conn->prepare($mysql);
-		$stmt->bind_param("ss", $name, $class);
+		$stmt->bind_param("ss", $recipeName, $class);
 		
 		if ($stmt != false) {
 			$stmt->execute();
@@ -539,14 +543,16 @@ Class DbHandler {
 
 	/* ------ cRud ------ */
 	/**
-	 * @return Array of recipe {id, name, class, date_added}
+	 * Selects a recipe from db
+	 * @param String $recipeName
+	 * @return recipe assoc array, false on failure
 	 */
-	function getFood($name) {
+	function getRecipe($recipeName) {
 		createIfNotExists(TBL_RECIPES);
 		
 		$mysql = "SELECT * FROM ". TBL_RECIPES ." WHERE ". FIELD_NAME ." = ?");
 		$stmt->$this->conn->prepare($mysql);
-		$stmt->bind_param("s", $name);
+		$stmt->bind_param("s", $recipeName);
 		
 		if ($stmt != false) {
 			$stmt->execute();
@@ -567,9 +573,9 @@ Class DbHandler {
 	}
 
 	/**
-	 * @return recipes of correct class in array form
+	 * @return array of assoc recipe arrays
 	 */
-	function getFoods($class) {
+	function getRecipes($class) {
 		createIfNotExists(TBL_RECIPES);
 		
 		$mysql = "SELECT * FROM ". TBL_RECIPES ." WHERE ". FIELD_CLASS ." = ?");
@@ -594,21 +600,22 @@ Class DbHandler {
 
 			return $recipes;
         } else 	// something is wrong
-        	return SENTINEL;
+        	return SENTINEL;														// probably not needed
 	}
 
 	/* ------ crUd ------ */
 	/**
-	 * @param $field is string name of db column
-	 * @param $value is the replacement value
-	 * @return Number of rows affected
+	 * Updates a field of a given recipe in db
+	 * @param String $field - db field
+	 * @param String $value - updated value
+	 * @return int number of rows affected, false on failure
 	 */
-	function updateFood($name, $field, $value) {
+	function updateRecipe($recipeName, $field, $value) {
 		createIfNotExists(TBL_RECIPES);
 
 		$mysql = "UPDATE ". TBL_RECIPES ." SET ". $field ." = ? WHERE ". FIELD_NAME ." = ?";
 		$stmt->$this->conn->prepare($mysql);
-		$stmt->bind_param("ss", $value, $name);
+		$stmt->bind_param("ss", $value, $recipeName);
 		
 		if ($stmt != false) {
 			$stmt->execute();
@@ -623,14 +630,16 @@ Class DbHandler {
 
 	/* ------ cruD ------ */
 	/**
-	 * @return Number of rows affected
+	 * Deletes a recipe from db
+	 * @param String $recipeName
+	 * @return int number of rows affected, false on failure
 	 */
-	function deleteFood($name) {
+	function deleteRecipe($recipeName) {
 		createIfNotExists(TBL_RECIPES);
 
 		$mysql = "DELETE FROM ". TBL_RECIPES ." WHERE ". FIELD_NAME ." = ?";
 		$stmt->$this->conn->prepare($mysql);
-		$stmt->bind_param("s", $name);
+		$stmt->bind_param("s", $recipeName);
 		
 		if ($stmt != false) {
 			$stmt->execute();
@@ -646,15 +655,17 @@ Class DbHandler {
 /* -------------------------- `venue_vote_types` table methods -------------------------- */
 	/* ------ Crud ------ */
 	/**
-	 * @param $name, $value
-	 * @return true if successful, otherwise false
+	 * Creates a venue vote type in db
+	 * @param String $venueName
+	 * @param String $value
+	 * @return true if successful, false on failure
 	 */
-	function createVenueVoteType($name, $value) {
+	function createVenueVoteType($venueName, $value) {
 		createIfNotExists(TBL_VENUE_VOTE_TYPES);
 		// remaining fields of id and date_added will be automatically filled in
 		$mysql = "INSERT INTO ". TBL_VENUE_VOTE_TYPES ." (". FIELD_NAME .", ". FIELD_VALUE .") VALUES (?, ?)";
 		$stmt->$this->conn->prepare($mysql);
-		$stmt->bind_param("si", $name, $value);
+		$stmt->bind_param("si", $venueName, $value);
 		
 		if ($stmt != false) {
 			$stmt->execute();
@@ -669,14 +680,16 @@ Class DbHandler {
 
 	/* ------ cRud ------ */
 	/**
-	 * @return Arrray of venueVoteType with correct name in array form
+	 * Gets a venue vote type from db
+	 * @param String $venueName
+	 * @return venue vote type assoc array, false on failure
 	 */
-	function getVenueVoteType($name) {
+	function getVenueVoteType($venueName) {
 		createIfNotExists(TBL_VENUE_VOTE_TYPES);
 		
 		$mysql = "SELECT * FROM ". TBL_VENUE_VOTE_TYPES ." WHERE ". FIELD_NAME ." = ?");
 		$stmt->$this->conn->prepare($mysql);
-		$stmt->bind_param("s", $name);
+		$stmt->bind_param("s", $venueName);
 		
 		if ($stmt != false) {
 			$stmt->execute();
@@ -697,39 +710,20 @@ Class DbHandler {
 	}
 
 	/* ------ crUd ------ */
-	/**
-	 * @param $field is string name of db column
-	 * @param $value is the replacement value
-	 * @return Number of rows affected
-	 */
-	function updateVenueVoteType($name, $field, $value) {
-		createIfNotExists(TBL_VENUE_VOTE_TYPES);
-
-		$mysql = "UPDATE ". TBL_VENUE_VOTE_TYPES ." SET ". $field ." = ? WHERE ". FIELD_NAME ." = ?";
-		$stmt->$this->conn->prepare($mysql);
-		$stmt->bind_param("ss", $value, $name);
-		
-		if ($stmt != false) {
-			$stmt->execute();
-			$stmt->store_result();
-			$numRows = $stmt->num_rows;
-			$stmt->close();
-
-			return $numRows;
-        } else 	// something is wrong
-        	return SENTINEL;
-	}
+	// TODO as needed...
 
 	/* ------ cruD ------ */
 	/**
-	 * @return Number of rows affected
+	 * Deletes a venue from the db
+	 * @param String $venueName
+	 * @return int number of rows affected, false on failure
 	 */
-	function deleteVenueVoteType($name) {
+	function deleteVenueVoteType($venueName) {
 		createIfNotExists(TBL_VENUE_VOTE_TYPES);
 
 		$mysql = "DELETE FROM ". TBL_VENUE_VOTE_TYPES ." WHERE ". FIELD_NAME ." = ?";
 		$stmt->$this->conn->prepare($mysql);
-		$stmt->bind_param("s", $name);
+		$stmt->bind_param("s", $venueName);
 		
 		if ($stmt != false) {
 			$stmt->execute();
@@ -746,15 +740,17 @@ Class DbHandler {
 
 	/* ------ Crud ------ */
 	/**
-	 * @param $name, $value
-	 * @return true if successful, otherwise false
+	 * Creates a recipe vote type in db
+	 * @param String $typeName
+	 * @param String $value
+	 * @return true if successful, false on failure
 	 */
-	function createFoodVoteType($type) {
+	function createRecipeVoteType($typeName, $value) {
 		createIfNotExists(TBL_RECIPE_VOTE_TYPES);
 		// remaining fields of id and date_added will be automatically filled in
 		$mysql = "INSERT INTO ". TBL_RECIPE_VOTE_TYPES ." (". FIELD_NAME .", ". FIELD_VALUE .") VALUES (?, ?)";
 		$stmt->$this->conn->prepare($mysql);
-		$stmt->bind_param("si", $name, $value);
+		$stmt->bind_param("si", $typeName, $value);
 		
 		if ($stmt != false) {
 			$stmt->execute();
@@ -769,14 +765,16 @@ Class DbHandler {
 
 	/* ------ cRud ------ */
 	/**
-	 * @return recipeVoteType with correct name in array form
+	 * Gets a recipe vote type from db
+	 * @param String $recipeName
+	 * @return recipe vote type assoc array, false on failure
 	 */
-	function getFoodVoteType($name) {
+	function getRecipeVoteType($recipeName) {
 		createIfNotExists(TBL_RECIPE_VOTE_TYPES);
 		
 		$mysql = "SELECT * FROM ". TBL_RECIPE_VOTE_TYPES ." WHERE ". FIELD_NAME ." = ?");
 		$stmt->$this->conn->prepare($mysql);
-		$stmt->bind_param("s", $name);
+		$stmt->bind_param("s", $recipeName);
 		
 		if ($stmt != false) {
 			$stmt->execute();
@@ -797,39 +795,20 @@ Class DbHandler {
 	}
 
 	/* ------ crUd ------ */
-	/**
-	 * @param $field is string name of db column
-	 * @param $value is the replacement value
-	 * @return Number of rows affected
-	 */
-	function updateFoodVoteType($name, $field, $value) {
-		createIfNotExists(TBL_RECIPE_VOTE_TYPES);
-
-		$mysql = "UPDATE ". TBL_RECIPE_VOTE_TYPES ." SET ". $field ." = ? WHERE ". FIELD_NAME ." = ?";
-		$stmt->$this->conn->prepare($mysql);
-		$stmt->bind_param("ss", $value, $name);
-		
-		if ($stmt != false) {
-			$stmt->execute();
-			$stmt->store_result();
-			$numRows = $stmt->num_rows;
-			$stmt->close();
-
-			return $numRows;
-        } else 	// something is wrong
-        	return SENTINEL;
-	}
+	// TODO as needed...
 
 	/* ------ cruD ------ */
 	/**
-	 * @return Number of rows affected
+	 * Deletes a recipe vote type from db
+	 * @param String $recipeName
+	 * @return int number of rows affected, false on failure
 	 */
-	function deleteFoodVoteType($name) {
+	function deleteRecipeVoteType($recipeName) {
 		createIfNotExists(TBL_RECIPE_VOTE_TYPES);
 
 		$mysql = "DELETE FROM ". TBL_RECIPE_VOTE_TYPES ." WHERE ". FIELD_NAME ." = ?";
 		$stmt->$this->conn->prepare($mysql);
-		$stmt->bind_param("s", $name);
+		$stmt->bind_param("s", $recipeName);
 		
 		if ($stmt != false) {
 			$stmt->execute();
@@ -847,8 +826,10 @@ Class DbHandler {
 	/**
 	 * Creates a vote >> an entry that matches all necessary chunks of data.
 	 * Without all parts, the vote (or entry) is not meaningful.
-	 * @param $userId, $venueId, $venueVoteId - all the params needed for a complete entry
-	 * @return true if successful, otherwise false
+	 * @param int $userId
+	 * @param int $venueId
+	 * @param int $venueVoteId
+	 * @return true if successful, false on failure
 	 */
 	function createVenueVote($userId, $venueId, $venueVoteId) {
 		createIfNotExists(TBL_USER_VENUE_VOTES);
@@ -869,8 +850,10 @@ Class DbHandler {
 
 	/**
 	 * Creates a vote >> an entry that matches all necessary chunks of data.
-	 * @param $mac, $venueName, $voteName
-	 * @return true if successful, otherwise false
+	 * @param String $mac, human-readable mac address
+	 * @param String $venueName
+	 * @param String $voteName
+	 * @return true if successful, false on failure
 	 */
 	function createVenueVote($mac, $venueName, $venueVoteName) {
 		createIfNotExists(TBL_USER_VENUE_VOTES);
@@ -886,9 +869,10 @@ Class DbHandler {
 	/* ------ cRud ------ */
 	/**
 	 * Determines if an entry will be allowed for this user in TBL_USER_VENUE_VOTES
-	 * @param $mac
-	 * @param $timestamp latest time for this ip to have voted last
-	 * @return whther or not $mac has made an entry since $timestamp
+	 * $timestamp is the latest time for this user to have voted last
+	 * @param String $mac, human-readable mac address
+	 * @param String $timestamp, in form 'Y-m-d H:i:s'
+	 * @return false if not recent, true otherwise
 	 */
 	function isRecentVenueVote($mac, $timestamp) {
 		createIfNotExists(TBL_USER_VENUE_VOTES);
@@ -910,11 +894,21 @@ Class DbHandler {
 	}
 
 	/**
-	 * Gets all votes for a given venue
-	 * @param $venueName
-	 * @return assoc. array of votes
+	 * Gets all votes for a given recipe with date_added after $timestmp
+	 * @param String $recipeName
+	 * @param String $timestamp
+	 * @return assoc array of votes
 	 */
-	function getVotes($venueName) {
+	function getRecentVenueVotes($venueName, $timestamp) {
+		// TODO...also change function name
+	}
+
+	/**
+	 * Gets all votes for a given venue
+	 * @param String $venueName
+	 * @return assoc array of votes
+	 */
+	function getVotesByVenue($venueName) {
 		createIfNotExists(TBL_USER_VENUE_VOTES);
 
 		$venue = getVenue($venueName);
@@ -941,10 +935,10 @@ Class DbHandler {
 
 	/**
 	 * Gets all votes by a given user
-	 * @param $mac - MAC address of user
-	 * @return assoc. array of votes
+	 * @param String $mac - MAC address of user
+	 * @return assoc array of votes
 	 */
-	function getVotes($mac) {
+	function getVenueVotesByUser($mac) {
 		createIfNotExists(TBL_USER_VENUE_VOTES);
 
 		$user = getUser($mac);
@@ -979,10 +973,12 @@ Class DbHandler {
 	/**
 	 * Creates a vote >> an entry that matches all necessary chunks of data.
 	 * Without all parts, the vote (or entry) is not meaningful.
-	 * @param $userId, $recipeId, $recipeVoteId - all the params needed for a complete entry
-	 * @return true if successful, otherwise false
+	 * @param int $userId
+	 * @param int $recipeId
+	 * @param int $recipeVoteId
+	 * @return true if successful, false on failure
 	 */
-	function createFoodVote($userId, $recipeId, $recipeVoteId) {
+	function createRecipeVote($userId, $recipeId, $recipeVoteId) {
 		createIfNotExists(TBL_USER_RECIPE_VOTES);
 
 		$mysql = "INSERT INTO ". TBL_USER_RECIPE_VOTES ." ( ". FIELD_USER_ID .", "
@@ -1001,30 +997,42 @@ Class DbHandler {
 
 	/**
 	 * Creates a vote >> an entry that matches all necessary chunks of data.
-	 * @param $mac, $venueName, $voteName
-	 * @return true if successful, otherwise false
+	 * @param String $mac
+	 * @param String $venueName
+	 * @param String $voteName
+	 * @return true if successful, false on failure
 	 */
-	function createVenueVote($mac, $recipeName, $recipeVoteName) {
-		createIfNotExists(TBL_USER_VENUE_VOTES);
+	function createRecipeVote($mac, $recipeName, $recipeVoteName) {
+		createIfNotExists(TBL_USER_RECIPE_VOTES);
 
 		$user = getUser($mac);
-		$recipe = getFood($recipeName);
-		$recipeVoteType = getFoodVoteType($recipeVoteName);
+		$recipe = getRecipe($recipeName);
+		$recipeVoteType = getRecipeVoteType($recipeVoteName);
 
-		$success = createFoodVote($user[FIELD_ID], $recipe[FIELD_ID], $recipeVoteType[FIELD_ID]);
+		$success = createRecipeVote($user[FIELD_ID], $recipe[FIELD_ID], $recipeVoteType[FIELD_ID]);
 		return $success;
 	}
 
 	/* ------ cRud ------ */
 	/**
+	 * Gets all votes for a given recipe with date_added after $timestmp
+	 * @param String $recipeName
+	 * @param String $timestamp
+	 * @return assoc array of votes
+	 */
+	function getRecentRecipeVotes($recipeName, $timestamp) {
+		// TODO...also change function name, check venue name
+	}
+
+	/**
 	 * Gets all votes for a given recipe
 	 * @param $recipeName
-	 * @return assoc. array of votes
+	 * @return assoc array of votes
 	 */
-	function getVotes($recipeName) {
+	function getVotesByRecipe($recipeName) {
 		createIfNotExists(TBL_USER_RECIPE_VOTES);
 
-		$recipe = getFood($recipeName);
+		$recipe = getRecipe($recipeName);
 
 		$mysql = "SELECT * FROM ". TBL_USER_RECIPE_VOTES ." WHERE ". FIELD_RECIPE_ID ." = ?";
 		$stmt->bind_param("i", $recipe[FIELD_ID]);
@@ -1049,9 +1057,9 @@ Class DbHandler {
 	/**
 	 * Gets all votes by a given user
 	 * @param $mac - MAC address of user
-	 * @return assoc. array of votes
+	 * @return assoc array of votes
 	 */
-	function getVotes($mac) {
+	function getRecipeVotesByUser($mac) {
 		createIfNotExists(TBL_USER_RECIPE_VOTES);
 
 		$user = getUser($mac);
@@ -1080,63 +1088,6 @@ Class DbHandler {
 
 	/* ------ cruD ------ */
 	// TODO will fill this out as needed
-
-/* -------------------------- `rating` table methods -------------------------- */												// now obsolete!
-	/**
-	 * Gets a total number of ratings: good or bad
-	 * @param ealiest MySql TIMESTAMP to accept 
-	 * @return an array of votes for 'good' and 'bad'
-	 */
-	public function totalRatings ($timestamp) {
-
-		$stmt = $this->conn->prepare("SELECT good, bad FROM rating r WHERE r.time_added >= ?");
-		$stmt->bind_param("s", $timestamp);
-
-		if (!$stmt)
-			return NULL;
-		
-		$stmt->execute();
-
-		// bind result variables
-		$stmt->bind_result($good, $bad);
-
-		// inititate counters
-		$sum_g = 0;
-		$sum_b = 0;
-
-		// fetch variables
-		while ($row = $stmt->fetch()) {
-			
-			if ($good != 0) {
-				
-				$sum_g++;		// each entry only represents 1 vote
-
-			} else if ($bad != 0) {
-				
-				$sum_b++;
-			}
-		}
-
-		$stmt->close();
-		
-		return array("good" => $sum_g, "bad" => $sum_b);
-	}
-
-
-
-	// make human readable mac address into an int
-	function mac2int($mac) {
-		$mac = str_replace(":", "", $mac);
-    	return base_convert($mac, 16, 10);
-	}
-
-	// make mac address human readable
-	function int2mac($int) {
-	    $hex = base_convert($int, 10, 16);
-	    while (strlen($hex) < 12)
-	        $hex = '0'.$hex;
-	    return strtoupper(implode(':', str_split($hex,2)));
-	}
 }
 
 ?>

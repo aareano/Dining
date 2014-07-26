@@ -39,8 +39,8 @@ define('TBL_VENUE_VOTE_TYPES', 'venue_vote_types');
 define('TBL_RECIPE_VOTE_TYPES', 'recipe_vote_types');
 	define('FIELD_VALUE', 'value');
 	define('VOTE_NAME', 'vote_name');
-	define('VENUE_VOTE_POS', 'positive');		// CHANGED FROM NAME_VENUE... WASN'T CHANGED IN DBHANDLER
-	define('VENUE_VOTE_NEG', 'negative');
+	define('VOTE_POS', 'positive');		// CHANGED FROM NAME_VENUE... WASN'T CHANGED IN DBHANDLER
+	define('VOTE_NEG', 'negative');
 
 define('TBL_USER_VENUE_VOTES', 'user_venue_votes');
 	define('FIELD_USER_ID', 'user_id');
