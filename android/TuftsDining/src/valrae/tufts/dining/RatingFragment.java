@@ -30,8 +30,17 @@ import android.widget.Toast;
 /**
  * Fragment for rating function: user votes for a venue as 'good' or 'bad'.
  * Vote is stored at mysql.hellobiped.com
- * @author Aaron
+ * @author Aaron Bowen
  */
+
+// TODO create sharepreference IS_USER
+
+// Flow:
+// 
+// User taps button >> HTTP Post venue vote >> HTTP Post venue tallies >> update display
+// 						
+//
+
 public class RatingFragment extends Fragment {
 
 	private final String TAG = "ComparisonFragment";
@@ -46,7 +55,7 @@ public class RatingFragment extends Fragment {
     private final String TAG_GOOD = "good";
     private final String TAG_BAD = "bad";
 
- // value keys
+    // value keys
     private final String good_key;
     private final String bad_key;
     private final String get_error_key;
@@ -58,10 +67,9 @@ public class RatingFragment extends Fragment {
     
     // Preferences
     private static final String PREF_LAST_VENUE = "last_venue_selected";
-    
+    private static final String PREF_IS_DB_USER = "is_user_in_database";
     
     private String mVenue;
-    
     
     public static RatingFragment newInstance(Context context) {
     	return new RatingFragment(context);
@@ -71,12 +79,10 @@ public class RatingFragment extends Fragment {
 		Log.i(TAG, "new RatingFragment()");
 	
 		CONTEXT = context;
-		get_error_key = CONTEXT.getResources().getString(R.string.get_error_key);
-		post_error_key = CONTEXT.getResources().getString(R.string.post_error_key);
-		post_message_key = CONTEXT.getResources().getString(R.string.post_message_key);
-		get_message_key = CONTEXT.getResources().getString(R.string.get_message_key);
-		good_key = CONTEXT.getResources().getString(R.string.good_key);
-		bad_key = CONTEXT.getResources().getString(R.string.bad_key);
+//		error_key = CONTEXT.getResources().getString(R.string.error_key);
+//		message_key = CONTEXT.getResources().getString(R.string.message_key);
+//		good_key = CONTEXT.getResources().getString(R.string.good_key);
+//		bad_key = CONTEXT.getResources().getString(R.string.bad_key);
 	}
     
 	@Override
@@ -84,7 +90,7 @@ public class RatingFragment extends Fragment {
 		setHasOptionsMenu(true);
 		
 		// read in the which venue was last selected
-		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
+		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());	// TODO, might need to be CONTEXT
 		mVenue = sp.getString(PREF_LAST_VENUE, null);
 		
 		super.onCreate(savedInstanceState);
@@ -130,28 +136,23 @@ public class RatingFragment extends Fragment {
 	     */
 	    
 	    mServer = new ServiceManager(CONTEXT, FUNCTIONALITY);
-	    mServer.setRequestCompleteListener (new RequestCompletedListener() {
+	    mServer.setServiceListener (new ServiceListener() {
 	    	
 	    	@Override
-			public void onComplete(String method, String json) {
+			public void onServiceComplete(String json) {
 				Log.i(TAG, "onComplete()");
+			
+				mServer.close();
 				
-				if (method.equals(HttpPost.METHOD_NAME)) {
-					// do nothing
-					
-				} else if (method.equals(HttpGet.METHOD_NAME)) {
-					mServer.close();
-					
-					List<NameValuePair> getData = new ArrayList<NameValuePair>();
-					getData = parseGetJson(json);
-					
-					// if no error, update counters
-					if (getValueFromKey(getData,get_error_key).equals("false"))
-						updateCounters(getData);
-					else {
-						String text = CONTEXT.getResources().getString(R.string.no_data);
-						Toast.makeText(CONTEXT, text, Toast.LENGTH_LONG).show();
-					}
+				List<NameValuePair> data = new ArrayList<NameValuePair>();
+				data = parseJson(json);
+				
+				// if no error, update counters
+				if (getValueFromKey(data, error_key).equals("false"))
+					updateCounters(data);
+				else {
+					String text = CONTEXT.getResources().getString(R.string.no_data);
+					Toast.makeText(CONTEXT, text, Toast.LENGTH_LONG).show();
 				}
 			}
 
@@ -163,7 +164,7 @@ public class RatingFragment extends Fragment {
 			}
 	    });
 		if (mServer.isConnected()) {
-			mServer.getTally();
+			mServer.getVenueTallies();
 			mServer.close();
 		}
 	}
@@ -177,55 +178,64 @@ public class RatingFragment extends Fragment {
 		
 		// Get my data
 		List<NameValuePair> data = new ArrayList<NameValuePair>();
-		String good = "0";
-		String bad = "0";
+		String pos = "0";
+		String neg = "0";
 		
 		if (buttonId == R.id.button_high){
-			good = "1";
+			pos = "1";
 		} else if (buttonId == R.id.button_low) {
-			bad = "1";
+			neg = "1";
 		}
 		
 		// Add my data
-		data.add(new BasicNameValuePair(CONTEXT.getResources().getString(R.string.good_key), 
-				good));
-		data.add(new BasicNameValuePair(CONTEXT.getResources().getString(R.string.bad_key), 
-				bad));
+		data.add(new BasicNameValuePair(CONTEXT.getResources().getString(R.string.positive_tag), 
+				pos));
+		data.add(new BasicNameValuePair(CONTEXT.getResources().getString(R.string.negative_tag), 
+				neg));
 		
 		// run sequence to run HTTP requests, etc.
 		mServer = new ServiceManager(CONTEXT, FUNCTIONALITY);
-		mServer.setRequestCompleteListener (new RequestCompletedListener() {
+		mServer.setServiceListener (new ServiceListener() {
 
 			@Override
-			public void onComplete(String method, String json) {
+			public void onServiceComplete(String json) {
 				Log.i(TAG, "onComplete()");
 				String recent = CONTEXT.getResources().getString(R.string.recent_message);
+
+				List<NameValuePair> data = new ArrayList<NameValuePair>();
+				data = parseJson(json);
 				
-				// POST
-				if (method.equals(HttpPost.METHOD_NAME)) {
-					List<NameValuePair> getData = new ArrayList<NameValuePair>();
-					getData = parsePostJson(json);
-					
+				// TODO make URLs constants
+				// votes
+				if (getValueFromKey(data, url_key).equals("/venue/vote") 
+						|| getValueFromKey(data, url_key).equals("recipe/vote")) {
 					// too recent
-					if (getValueFromKey(getData, post_message_key).equals(recent)) {
-						String text = CONTEXT.getResources().getString(R.string.too_recent);
+					if (getValueFromKey(data, message_key).equals(recent)) {
+						String text = CONTEXT.getResources().getString(R.string.recency_error);
 						Toast.makeText(CONTEXT, text, Toast.LENGTH_SHORT).show();
 					
 					// actual error
-					} else if (getValueFromKey(getData, post_error_key).equals("true")) {
-						String text = CONTEXT.getResources().getString(R.string.no_post);
+					} else if (getValueFromKey(data, error_key).equals("true")) {
+						String text = CONTEXT.getResources().getString(R.string.no_vote_error);
 						Toast.makeText(CONTEXT, text, Toast.LENGTH_SHORT).show();
 					}
-					mServer.getTally();
+					mServer.getVenueTallies();
 					
-				// GET
-				} else if (method.equals(HttpGet.METHOD_NAME)) {
-					mServer.close();
-
-					List<NameValuePair> getData = new ArrayList<NameValuePair>();
-					getData = parseGetJson(json);
-					updateCounters(getData);
+				// tallies
+				} else if (getValueFromKey(data, url_key).equals("/venue/tally")
+						|| getValueFromKey(data, url_key).equals("recipe/tally")) {
+				
+					List<NameValuePair> data = new ArrayList<NameValuePair>();
+					data = parseJson(json);
+					
+					// actual error
+					if (getValueFromKey(data, error_key).equals("true")) {
+						String text = CONTEXT.getResources().getString(R.string.no_vote_error);
+						Toast.makeText(CONTEXT, text, Toast.LENGTH_SHORT).show();
+					} else
+						updateCounters(data); 
 				}
+				mServer.close();
 			}
 
 			@Override
@@ -274,70 +284,67 @@ public class RatingFragment extends Fragment {
      * Extracts meaningful data from JSON strings
      * @param jsonResponses contains POST then GET JSON responses
      */
-	public List<NameValuePair> parsePostJson(String postJson) {
-    	List<NameValuePair> postResults = new ArrayList<NameValuePair>();
+	public List<NameValuePair> parseJson(String json) {
+    	List<NameValuePair> results = new ArrayList<NameValuePair>();
     	String errorAlert = "Something went wroooong!";
     	
-    	// parse POST JSON and take appropriate action
-		if (postJson != null) {
+    	// parse JSON and take appropriate action
+		if (json != null) {
 			
 			// initialize JSON values
-			boolean postError 	= false;
-			String postMessage =  null;
+			boolean error 	= false;
+			String message =  null;
+			String url = null;
+			int posVote = -1;
+			int negVote = -1;
 
 			try {
-				JSONObject jsonObj = new JSONObject(postJson);
-				postError 	= jsonObj.getBoolean(TAG_ERROR);
-				postMessage = jsonObj.getString(TAG_MESSAGE);
+				JSONObject jsonObj = new JSONObject(json);
+				error 	= jsonObj.getBoolean(TAG_ERROR);
+				message = jsonObj.getString(TAG_MESSAGE);
+				url 	= jsonObj.getString(TAG_URL);
+				
+				String url1 = "/venue/tally";
+				String url2 = "/venue/tally/user";
+				String url3 = "/recipe/tally";
+				String url4 = "/recipe/tally/user";
+				
+				if (url.equals(url1)) {
+					posVote = jsonObj.getInt(TAG_POS_VOTE);
+					negVote = jsonObj.getInt(TAG_NEG_VOTE);
+				} else if (url.equals(url2)) {
+					posVote = jsonObj.getInt(TAG_POS_VOTE);
+					negVote = jsonObj.getInt(TAG_NEG_VOTE);	
+				} else if (url.equals(url3)) {
+					posVote = jsonObj.getInt(TAG_POS_VOTE);
+					negVote = jsonObj.getInt(TAG_NEG_VOTE);
+				} else if (url.equals(url4)) {
+					posVote = jsonObj.getInt(TAG_POS_VOTE);
+					negVote = jsonObj.getInt(TAG_NEG_VOTE);
+				}
+			
 			} catch (JSONException e) {
 				e.printStackTrace();
-				Log.e(TAG, "Error in parseGetJson()");
+				Log.e(TAG, "Error in parseJson()");
 				Toast.makeText(CONTEXT, errorAlert, Toast.LENGTH_SHORT).show();
 			}
-			postResults.add(new BasicNameValuePair(
-					post_error_key, postError + ""));
-			postResults.add(new BasicNameValuePair(
-					post_message_key, postMessage));
+			results.add(new BasicNameValuePair(error_key, error + ""));
+			results.add(new BasicNameValuePair(url_key, url));
+			results.add(new BasicNameValuePair(message_key, message));
+			if (posVote != -1 && negVote != -1) {
+				results.add(new BasicNameValuePair(pos_vote_key, posVote));
+				results.add(new BasicNameValuePair(neg_vote_key, negVote));
+			}
+			
 		} else {
 			Log.e("ServiceManager", "Couldn't get any data from the URL");
 			Toast.makeText(CONTEXT, errorAlert, Toast.LENGTH_SHORT).show();
 		}
-		return postResults;
+		
+		return results;
 	}
 		
-	public List<NameValuePair> parseGetJson (String getJson) {
-		List<NameValuePair> getResults= new ArrayList<NameValuePair>();
-		String errorAlert = "Something went wroooong!";
-		
-		// parse GET JSON and take appropriate action
-		if (getJson != null) {
-			
-			// initialize vars
-			boolean error	= false;
-			String message	= null;
-			String good 	= null;
-            String bad 		= null;
-			
-			// get the JSONObject and store basic responses in ArrayList
-			try {
-				JSONObject jsonObj = new JSONObject(getJson);
-            	error 	= jsonObj.getBoolean(TAG_ERROR);
-            	message = jsonObj.getString(TAG_MESSAGE);
-            	good 	= jsonObj.getString(TAG_GOOD);
-				bad 	= jsonObj.getString(TAG_BAD);
-			} catch (JSONException e) {
-				e.printStackTrace();
-				Log.e(TAG, "Error in parseGetJson()");
-				Toast.makeText(CONTEXT, errorAlert, Toast.LENGTH_SHORT).show();
-			}
-			getResults.add(new BasicNameValuePair(get_error_key, error + ""));
-			getResults.add(new BasicNameValuePair(get_message_key, message));
-        	getResults.add(new BasicNameValuePair(good_key, good));
-        	getResults.add(new BasicNameValuePair(bad_key, bad));
-		}
-		return getResults;
-	}
-
+	
 	/* ------------------------- UI methods ------------------------- */
 	
     /**
@@ -347,18 +354,18 @@ public class RatingFragment extends Fragment {
     public void updateCounters(List<NameValuePair> pairs) {
     	Log.i(TAG, "updateCounters()");
     	
-    	// check for get error
-    	if (getValueFromKey(pairs, get_error_key).equals("false")) {
+    	// check for error
+    	if (getValueFromKey(pairs, error_key).equals("false")) {
 		    
-    		String good = getValueFromKey(pairs, good_key);
-    		String bad 	= getValueFromKey(pairs, bad_key);
+    		String posVotes = getValueFromKey(pairs, pos_vote_key);
+    		String negVotes = getValueFromKey(pairs, neg_vote_key);
     		
-    		((TextView) (((Activity) CONTEXT).findViewById(R.id.good_counter))).setText(good);
-    		((TextView) (((Activity) CONTEXT).findViewById(R.id.bad_counter))).setText(bad);
+    		((TextView) (((Activity) CONTEXT).findViewById(R.id.pos_vote_counter))).setText(posVotes);
+    		((TextView) (((Activity) CONTEXT).findViewById(R.id.neg_vote_counter))).setText(negVotes);
     	
     	// get error happened
     	} else {
-    		String toastText = getValueFromKey(pairs, get_message_key); 
+    		String toastText = getValueFromKey(pairs, message_key); 
     		Toast.makeText(CONTEXT, toastText, Toast.LENGTH_SHORT).show();
     	}
     }

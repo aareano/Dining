@@ -39,8 +39,8 @@ define('TBL_VENUE_VOTE_TYPES', 'venue_vote_types');
 define('TBL_RECIPE_VOTE_TYPES', 'recipe_vote_types');
 	define('FIELD_VALUE', 'value');
 	define('VOTE_NAME', 'vote_name');
-	define('VOTE_POS', 'positive');		// CHANGED FROM NAME_VENUE... WASN'T CHANGED IN DBHANDLER
-	define('VOTE_NEG', 'negative');
+	define('POS_VOTE', 'positive');		// CHANGED FROM NAME_VENUE... WASN'T CHANGED IN DBHANDLER
+	define('NEG_VOTE', 'negative');
 
 define('TBL_USER_VENUE_VOTES', 'user_venue_votes');
 	define('FIELD_USER_ID', 'user_id');
@@ -51,6 +51,11 @@ define('TBL_USER_RECIPE_VOTES', 'user_recipe_votes');
 	define('FIELD_RECIPE_ID', 'recipe_id');
 	define('FIELD_RECIPE_VOTE_ID', 'recipe_vote_id');
 
+
+// Response constants
+define('ERROR_TAG', 'error');
+define('URL_TAG', 'url');
+define('MESSAGE_TAG', 'message');
 
 // Boolean constants
 define('SENTINEL', false);

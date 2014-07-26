@@ -1283,11 +1283,10 @@ containing a value of this type.
         public static final int action_settings=0x7f0a0014;
         /**  - - - - - - - - - - - Menus - - - - - - - - - - - 
          */
-        public static final int action_venue=0x7f0a0033;
+        public static final int action_venue=0x7f0a0028;
         /**  App Stuff 
          */
         public static final int app_name=0x7f0a000d;
-        public static final int bad_key=0x7f0a0026;
         public static final int bad_stats=0x7f0a0022;
         /**  Change to "APPROVED!" stamp image 
          */
@@ -1295,41 +1294,43 @@ containing a value of this type.
         public static final int button_carm=0x7f0a001b;
         public static final int button_dewick=0x7f0a0019;
         public static final int button_good=0x7f0a001f;
-        public static final int carm_key=0x7f0a0024;
         public static final int carm_stats=0x7f0a001c;
         /**  Comparison 
          */
         public static final int comparison=0x7f0a0018;
-        /**  - - - - - - - - - - - HTTP Protocol  - - - - - - - - - - - 
- Keys for ArrayList 
-         */
-        public static final int dewick_key=0x7f0a0023;
         public static final int dewick_stats=0x7f0a001a;
-        public static final int error_key=0x7f0a0029;
-        public static final int get_error_key=0x7f0a002d;
-        public static final int get_message_key=0x7f0a002c;
-        public static final int good_key=0x7f0a0025;
         public static final int good_stats=0x7f0a0021;
         /**  Default 
          */
         public static final int instructions=0x7f0a0015;
-        public static final int mac_key=0x7f0a0027;
-        public static final int message_key=0x7f0a0028;
         public static final int navigation_drawer_close=0x7f0a000f;
         public static final int navigation_drawer_open=0x7f0a000e;
-        public static final int negative_button=0x7f0a0036;
-        /**  - - - - - - - - - - - Toasts - - - - - - - - - - - 
+        public static final int negative_button=0x7f0a002b;
+        /**  - - - - - - - - - - - HTTP Protocol  - - - - - - - - - - - 
+ Keys for ArrayList 
+    <string name="dewick_key">dewick</string>
+    <string name="carm_key">carm</string>
+    <string name="good_key">good</string>
+    <string name="bad_key">bad</string>
+    <string name="mac_key">mac_address</string>
+    <string name="message_key">message</string>
+    <string name="error_key">message</string>
+    
+    <string name="post_message_key">message</string>
+    <string name="post_error_key">error</string>
+    
+    <string name="get_message_key">message</string> 
+    <string name="get_error_key">error</string> 
+ - - - - - - - - - - - Toasts - - - - - - - - - - - 
          */
-        public static final int no_data=0x7f0a002e;
-        public static final int no_post=0x7f0a002f;
-        public static final int positive_button=0x7f0a0035;
-        public static final int post_error_key=0x7f0a002b;
-        public static final int post_message_key=0x7f0a002a;
-        public static final int process_canceled=0x7f0a0030;
+        public static final int no_data=0x7f0a0023;
+        public static final int no_post=0x7f0a0024;
+        public static final int positive_button=0x7f0a002a;
+        public static final int process_canceled=0x7f0a0025;
         /**  Rating 
          */
         public static final int rating=0x7f0a001e;
-        public static final int recent_message=0x7f0a0031;
+        public static final int recent_message=0x7f0a0026;
         public static final int reminder=0x7f0a0016;
         /**  - - - - - - - - - - - FRAGMENTS  - - - - - - - - - - - 
  Navigation 
@@ -1337,11 +1338,11 @@ containing a value of this type.
         public static final int title_comparison=0x7f0a0011;
         public static final int title_rating=0x7f0a0012;
         public static final int title_section3=0x7f0a0013;
-        public static final int too_recent=0x7f0a0032;
+        public static final int too_recent=0x7f0a0027;
         public static final int underscore=0x7f0a001d;
         /**  - - - - - - - - - - - Dialogs - - - - - - - - - - - 
          */
-        public static final int venue_dialog=0x7f0a0034;
+        public static final int venue_dialog=0x7f0a0029;
         public static final int wrong=0x7f0a0017;
     }
     public static final class style {

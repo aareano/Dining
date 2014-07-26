@@ -56,7 +56,7 @@ public class ServiceManager {
 	private NetworkInfo networkInfo;
 	private ProgressDialog pDialog;
 	
-	private static RequestCompletedListener completionListener;
+	private static ServiceListener serviceListener;
 	private Handler handler;
 	
 	private static class myHandler extends Handler {
@@ -73,12 +73,12 @@ public class ServiceManager {
 			if (target != null) {
 				switch (msg.what) {
 				case 0:
-					if (completionListener != null)
-						target.alertFragment(POST, mPostJson);
+					if (serviceListener != null)
+						target.alertFragment(mJson);
 					break;
 				case 1:
-					if (completionListener != null)
-						target.alertFragment(GET, mGetJson);
+					if (serviceListener != null)
+						target.alertFragment(mJson);
 					break;
 				default:
 					break;
@@ -90,7 +90,7 @@ public class ServiceManager {
 	/**
 	 * Creates new ServiceManager object
 	 * @param context of activity that this is working in
-	 * @param requestCompletedListener 
+	 * @param ServiceListener 
 	 * @param function is functionality of the activity that is using ServiceManager
 	 */
 	public ServiceManager (Context context, String functionality) {
@@ -316,16 +316,16 @@ public class ServiceManager {
 	}
 	
 	/* -------------------------- Callback method -------------------------- */
-	public void setRequestCompleteListener(RequestCompletedListener listener) {
-		completionListener = listener;
+	public void setServiceListener(ServiceListener listener) {
+		serviceListener = listener;
 	}
 	
 	public void alertFragment(String method, String json) {
-		completionListener.onComplete(method, json);
+		serviceListener.onServiceComplete(method, json);
 	}
 	
 	public void cancelAlert() {
-		completionListener.onCancel();
+		serviceListener.onCancel();
 	}
 	
 	/* -------------------------- Getter methods -------------------------- */

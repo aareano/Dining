@@ -68,11 +68,13 @@ $app->post('/create/user', function() use ($app) {
 	$success = $db->createUser($mac, $ipv4, $ipv6);
 
 	if ($success) {
-		$response["error"] = false;
-		$response["message"] = "Successfully created user";
+		$response[ERROR_TAG] = false;
+		$response[URL_TAG] = "/create/user";
+		$response[MESSAGE_TAG] = "Successfully created user";
 	} else {
-		$response["error"] = true;
-		$response["message"] = "There was an error, user was not created";
+		$response[ERROR_TAG] = true;
+		$response[URL_TAG] = "/create/user";
+		$response[MESSAGE_TAG] = "There was an error, user was not created";
 	}
 
 	echoResponse(201, $response);
@@ -95,11 +97,13 @@ $app->post('/create/venue', function() use ($app) {
 	$success = $db->createVenue($venueName, $venueClass);
 
 	if ($success) {
-		$response["error"] = false;
-		$response["message"] = "Successfully created venue";
+		$response[ERROR_TAG] = false;
+		$response[URL_TAG] = "/create/venue";
+		$response[MESSAGE_TAG] = "Successfully created venue";
 	} else {
-		$response["error"] = true;
-		$response["message"] = "There was an error, venue was not created";
+		$response[ERROR_TAG] = true;
+		$response[URL_TAG] = "/create/venue";
+		$response[MESSAGE_TAG] = "There was an error, venue was not created";
 	}
 
 	echoResponse(201, $response);
@@ -122,11 +126,13 @@ $app->post('/create/recipe', function() use ($app) {
 	$success = $db->createVenue($recipeName, $recipeClass);
 
 	if ($success) {
-		$response["error"] = false;
-		$response["message"] = "Successfully created recipe";
+		$response[ERROR_TAG] = false;
+		$response[URL_TAG] = "/create/recipe";
+		$response[MESSAGE_TAG] = "Successfully created recipe";
 	} else {
-		$response["error"] = true;
-		$response["message"] = "There was an error, recipe was not created";
+		$response[ERROR_TAG] = true;
+		$response[URL_TAG] = "/create/recipe";
+		$response[MESSAGE_TAG] = "There was an error, recipe was not created";
 	}
 
 	echoResponse(201, $response);
@@ -160,15 +166,18 @@ $app->post('/venue/vote', function() use ($app) {
 		$success = $db->createVenueVote($mac, $venueName, $voteName);
 
 		if ($success) {
-			$response["error"] = false;
-			$response["message"] = "Successfully posted vote for ". $venueName;
+			$response[ERROR_TAG] = false;
+			$response[URL_TAG] = "/venue/vote";
+			$response[MESSAGE_TAG] = "Successfully posted vote for ". $venueName;
 		} else {
-			$response["error"] = true;
-			$response["message"] = "There was an error, vote for ". $venueName ." not posted"; 
+			$response[ERROR_TAG] = true;
+			$response[URL_TAG] = "/venue/vote";
+			$response[MESSAGE_TAG] = "There was an error, vote for ". $venueName ." not posted"; 
 		}
 	} else {
-		$response["error"] = true;
-		$response["message"] = "This mac address has voted too recently.";
+		$response[ERROR_TAG] = true;
+		$response[URL_TAG] = "/venue/vote";
+		$response[MESSAGE_TAG] = "This mac address has voted too recently.";
 	}
 
 	echoResponse(201, $response);
@@ -188,29 +197,31 @@ $app->post('/venue/tally', function() use ($app) {
 
 	// get array of votes and ids of pos/neg venue votes
 	$venueVotes = $db->getVotesByVenue($venueName);
-	$posVote = $db->getVenueVoteType(VOTE_POS);
-	$negVote = $db->getVenueVoteType(VOTE_NEG);
+	$posVote = $db->getVenueVoteType(POS_VOTE);
+	$negVote = $db->getVenueVoteType(NEG_VOTE);
 
 	$voteCounts = [
-		VOTE_POS => 0,
-		VOTE_NEG => 0
+		POS_VOTE => 0,
+		NEG_VOTE => 0
 	];
 	if ($venueVotes and count($venueVotes) > 1) {	// best practice, check posVote, negVote, and venueVotes??
 		foreach ($venueVotes as $row) {
 			if ($row[FIELD_VENUE_VOTE_ID] = $posVote[FIELD_ID])
-				$voteCounts[VOTE_POS]++;
+				$voteCounts[POS_VOTE]++;
 			elseif ($row[FIELD_VENUE_VOTE_ID] = $negVote[FIELD_ID])
-				$voteCounts[VOTE_NEG]++;
+				$voteCounts[NEG_VOTE]++;
 		}
 	
-		$response["error"] = false;
-		$response["message"] = "Successfully retrieved ". $venueName ."'s vote tallies";
-		$response[VOTE_POS] = $voteCounts[VOTE_POS];
-		$response[VOTE_NEG] = $voteCounts[VOTE_NEG];
+		$response[ERROR_TAG] = false;
+		$response[URL_TAG] = "/venue/tally";
+		$response[MESSAGE_TAG] = "Successfully retrieved ". $venueName ."'s vote tallies";
+		$response[POS_VOTE] = $voteCounts[POS_VOTE];
+		$response[NEG_VOTE] = $voteCounts[NEG_VOTE];
 	
 	} else {
-		$response["error"] = true;
-		$response["message"] = "There was an error, ". $venueName ."'s vote tallies not retrieved";
+		$response[ERROR_TAG] = true;
+		$response[URL_TAG] = "/venue/tally";
+		$response[MESSAGE_TAG] = "There was an error, ". $venueName ."'s vote tallies not retrieved";
 	}
 
 	echoResponse(201, $response);
@@ -230,29 +241,31 @@ $app->post('/venue/tally/user', function() use ($app) {
 
 	// get array of votes and ids of pos/neg venue votes
 	$userVotes = $db->getVenueVotesByUser($mac);
-	$posVote = $db->getVenueVoteType(VOTE_POS);
-	$negVote = $db->getVenueVoteType(VOTE_NEG);
+	$posVote = $db->getVenueVoteType(POS_VOTE);
+	$negVote = $db->getVenueVoteType(NEG_VOTE);
 
 	$voteCounts = [
-		VOTE_POS => 0,
-		VOTE_NEG => 0
+		POS_VOTE => 0,
+		NEG_VOTE => 0
 	];
 	if ($userVotes and count($userVotes) > 1) {	// best practice, check posVote, negVote, and userVotes??
 		foreach ($userVotes as $row) {
 			if ($row[FIELD_VENUE_VOTE_ID] = $posVote[FIELD_ID])
-				$voteCounts[VOTE_POS]++;
+				$voteCounts[POS_VOTE]++;
 			elseif ($row[FIELD_VENUE_VOTE_ID] = $negVote[FIELD_ID])
-				$voteCounts[VOTE_NEG]++;
+				$voteCounts[NEG_VOTE]++;
 		}
 	
-		$response["error"] = false;
-		$response["message"] = "Successfully retrieved user's vote tallies";
-		$response[VOTE_POS] = $voteCounts[VOTE_POS];
-		$response[VOTE_NEG] = $voteCounts[VOTE_NEG];
+		$response[ERROR_TAG] = false;
+		$response[URL_TAG] = "/venue/tally/user";
+		$response[MESSAGE_TAG] = "Successfully retrieved user's vote tallies";
+		$response[POS_VOTE] = $voteCounts[POS_VOTE];
+		$response[NEG_VOTE] = $voteCounts[NEG_VOTE];
 	
 	} else {
-		$response["error"] = true;
-		$response["message"] = "There was an error, user's vote tallies not retrieved";
+		$response[ERROR_TAG] = true;
+		$response[URL_TAG] = "/venue/tally/user";
+		$response[MESSAGE_TAG] = "There was an error, user's vote tallies not retrieved";
 	}
 
 	echoResponse(201, $response);
@@ -278,11 +291,13 @@ $app->post('/recipe/vote', function() use ($app) {
 		$success = $db->createRecipeVote($mac, $recipeName, $voteName);
 
 	if ($success) {
-		$response["error"] = false;
-		$response["message"] = "Successfully posted vote for ". $recipeName;
+		$response[ERROR_TAG] = false;
+		$response[URL_TAG] = "/recipe/vote";
+		$response[MESSAGE_TAG] = "Successfully posted vote for ". $recipeName;
 	} else {
-		$response["error"] = true;
-		$response["message"] = "There was an error, vote for ". $recipeName ." not posted"; 
+		$response[ERROR_TAG] = true;
+		$response[URL_TAG] = "/recipe/vote";
+		$response[MESSAGE_TAG] = "There was an error, vote for ". $recipeName ." not posted"; 
 	}
 
 	echoResponse(201, $response);
@@ -302,29 +317,31 @@ $app->post('/recipe/tally', function() use ($app) {
 
 	// get array of votes and ids of pos/neg venue votes
 	$recipeVotes = $db->getVotesByRecipe($recipeName);
-	$posVote = $db->getRecipeVoteType(VOTE_POS);
-	$negVote = $db->getRecipeVoteType(VOTE_NEG);
+	$posVote = $db->getRecipeVoteType(POS_VOTE);
+	$negVote = $db->getRecipeVoteType(NEG_VOTE);
 
 	$voteCounts = [
-		VOTE_POS => 0,
-		VOTE_NEG => 0
+		POS_VOTE => 0,
+		NEG_VOTE => 0
 	];
 	if ($recipeVotes and count($recipeVotes) > 1) {	// best practice, check posVote, negVote, and recipeVotes??
 		foreach ($recipeVotes as $row) {
 			if ($row[FIELD_VENUE_VOTE_ID] = $posVote[FIELD_ID])
-				$voteCounts[VOTE_POS]++;
+				$voteCounts[POS_VOTE]++;
 			elseif ($row[FIELD_VENUE_VOTE_ID] = $negVote[FIELD_ID])
-				$voteCounts[VOTE_NEG]++;
+				$voteCounts[NEG_VOTE]++;
 		}
 	
-		$response["error"] = false;
-		$response["message"] = "Successfully retrieved vote tallies for ". $recipeName;
-		$response[VOTE_POS] = $voteCounts[VOTE_POS];
-		$response[VOTE_NEG] = $voteCounts[VOTE_NEG];
+		$response[ERROR_TAG] = false;
+		$response[URL_TAG] = "/recipe/tally";
+		$response[MESSAGE_TAG] = "Successfully retrieved vote tallies for ". $recipeName;
+		$response[POS_VOTE] = $voteCounts[POS_VOTE];
+		$response[NEG_VOTE] = $voteCounts[NEG_VOTE];
 	
 	} else {
-		$response["error"] = true;
-		$response["message"] = "There was an error, vote tallies for ". $recipeName ." not retrieved";
+		$response[ERROR_TAG] = true;
+		$response[URL_TAG] = "/recipe/tally";
+		$response[MESSAGE_TAG] = "There was an error, vote tallies for ". $recipeName ." not retrieved";
 	}
 
 	echoResponse(201, $response);
@@ -344,29 +361,31 @@ $app->post('/recipe/tally/user', function() use ($app) {
 
 	// get array of votes and ids of pos/neg venue votes
 	$userVotes = $db->getRecipeVotesByUser($mac);
-	$posVote = $db->getRecipeVoteType(VOTE_POS);
-	$negVote = $db->getRecipeVoteType(VOTE_NEG);
+	$posVote = $db->getRecipeVoteType(POS_VOTE);
+	$negVote = $db->getRecipeVoteType(NEG_VOTE);
 
 	$voteCounts = [
-		VOTE_POS => 0,
-		VOTE_NEG => 0
+		POS_VOTE => 0,
+		NEG_VOTE => 0
 	];
 	if ($userVotes and count($userVotes) > 1) {	// best practice, check posVote, negVote, and userVotes??
 		foreach ($userVotes as $row) {
 			if ($row[FIELD_RECIPE_VOTE_ID] = $posVote[FIELD_ID])
-				$voteCounts[VOTE_POS]++;
+				$voteCounts[POS_VOTE]++;
 			elseif ($row[FIELD_RECIPE_VOTE_ID] = $negVote[FIELD_ID])
-				$voteCounts[VOTE_NEG]++;
+				$voteCounts[NEG_VOTE]++;
 		}
 	
-		$response["error"] = false;
-		$response["message"] = "Successfully retrieved user's recipe vote tallies";
-		$response[VOTE_POS] = $voteCounts[VOTE_POS];
-		$response[VOTE_NEG] = $voteCounts[VOTE_NEG];
+		$response[ERROR_TAG] = false;
+		$response[URL_TAG] = "/recipe/tally/user";
+		$response[MESSAGE_TAG] = "Successfully retrieved user's recipe vote tallies";
+		$response[POS_VOTE] = $voteCounts[POS_VOTE];
+		$response[NEG_VOTE] = $voteCounts[NEG_VOTE];
 	
 	} else {
-		$response["error"] = true;
-		$response["message"] = "There was an error, user's recipe vote tallies not retrieved";
+		$response[ERROR_TAG] = true;
+		$response[URL_TAG] = "/recipe/tally/user";
+		$response[MESSAGE_TAG] = "There was an error, user's recipe vote tallies not retrieved";
 	}
 
 	echoResponse(201, $response);

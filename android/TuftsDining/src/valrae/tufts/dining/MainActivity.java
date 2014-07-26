@@ -16,9 +16,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
 
+// TODO long term: once a day check for new venues/foods/vote types etc. >> save this in shared preferences
 
-// Orientation change - fixed?
-// current - VenueDialogFragment
 // TODO, create call back to check is drawer is open for options menu.
 
 
