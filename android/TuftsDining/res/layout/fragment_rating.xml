@@ -39,7 +39,7 @@
 
         <!-- Dewick -->
         <TextView
-            android:id="@+id/good_stats"
+            android:id="@+id/positive_stats"
 
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
@@ -48,7 +48,7 @@
             android:text="@string/good_stats" />
 
         <TextView
-            android:id="@+id/good_counter"
+            android:id="@+id/positive_counter"
 
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
@@ -57,7 +57,7 @@
 
         <!-- Carmichael -->
         <TextView
-            android:id="@+id/bad_stats"
+            android:id="@+id/negative_stats"
 
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
@@ -67,7 +67,7 @@
             android:text="@string/bad_stats" />
 
         <TextView
-            android:id="@+id/bad_counter"
+            android:id="@+id/negative_counter"
 
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"

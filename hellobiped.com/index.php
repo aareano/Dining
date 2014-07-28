@@ -69,11 +69,11 @@ $app->post('/create/user', function() use ($app) {
 
 	if ($success) {
 		$response[ERROR_TAG] = false;
-		$response[URL_TAG] = "/create/user";
+		$response[PATH_TAG] = "/create/user";
 		$response[MESSAGE_TAG] = "Successfully created user";
 	} else {
 		$response[ERROR_TAG] = true;
-		$response[URL_TAG] = "/create/user";
+		$response[PATH_TAG] = "/create/user";
 		$response[MESSAGE_TAG] = "There was an error, user was not created";
 	}
 
@@ -98,11 +98,11 @@ $app->post('/create/venue', function() use ($app) {
 
 	if ($success) {
 		$response[ERROR_TAG] = false;
-		$response[URL_TAG] = "/create/venue";
+		$response[PATH_TAG] = "/create/venue";
 		$response[MESSAGE_TAG] = "Successfully created venue";
 	} else {
 		$response[ERROR_TAG] = true;
-		$response[URL_TAG] = "/create/venue";
+		$response[PATH_TAG] = "/create/venue";
 		$response[MESSAGE_TAG] = "There was an error, venue was not created";
 	}
 
@@ -127,11 +127,11 @@ $app->post('/create/recipe', function() use ($app) {
 
 	if ($success) {
 		$response[ERROR_TAG] = false;
-		$response[URL_TAG] = "/create/recipe";
+		$response[PATH_TAG] = "/create/recipe";
 		$response[MESSAGE_TAG] = "Successfully created recipe";
 	} else {
 		$response[ERROR_TAG] = true;
-		$response[URL_TAG] = "/create/recipe";
+		$response[PATH_TAG] = "/create/recipe";
 		$response[MESSAGE_TAG] = "There was an error, recipe was not created";
 	}
 
@@ -167,16 +167,16 @@ $app->post('/venue/vote', function() use ($app) {
 
 		if ($success) {
 			$response[ERROR_TAG] = false;
-			$response[URL_TAG] = "/venue/vote";
+			$response[PATH_TAG] = "/venue/vote";
 			$response[MESSAGE_TAG] = "Successfully posted vote for ". $venueName;
 		} else {
 			$response[ERROR_TAG] = true;
-			$response[URL_TAG] = "/venue/vote";
+			$response[PATH_TAG] = "/venue/vote";
 			$response[MESSAGE_TAG] = "There was an error, vote for ". $venueName ." not posted"; 
 		}
 	} else {
 		$response[ERROR_TAG] = true;
-		$response[URL_TAG] = "/venue/vote";
+		$response[PATH_TAG] = "/venue/vote";
 		$response[MESSAGE_TAG] = "This mac address has voted too recently.";
 	}
 
@@ -213,14 +213,14 @@ $app->post('/venue/tally', function() use ($app) {
 		}
 	
 		$response[ERROR_TAG] = false;
-		$response[URL_TAG] = "/venue/tally";
+		$response[PATH_TAG] = "/venue/tally";
 		$response[MESSAGE_TAG] = "Successfully retrieved ". $venueName ."'s vote tallies";
 		$response[POS_VOTE] = $voteCounts[POS_VOTE];
 		$response[NEG_VOTE] = $voteCounts[NEG_VOTE];
 	
 	} else {
 		$response[ERROR_TAG] = true;
-		$response[URL_TAG] = "/venue/tally";
+		$response[PATH_TAG] = "/venue/tally";
 		$response[MESSAGE_TAG] = "There was an error, ". $venueName ."'s vote tallies not retrieved";
 	}
 
@@ -257,14 +257,14 @@ $app->post('/venue/tally/user', function() use ($app) {
 		}
 	
 		$response[ERROR_TAG] = false;
-		$response[URL_TAG] = "/venue/tally/user";
+		$response[PATH_TAG] = "/venue/tally/user";
 		$response[MESSAGE_TAG] = "Successfully retrieved user's vote tallies";
 		$response[POS_VOTE] = $voteCounts[POS_VOTE];
 		$response[NEG_VOTE] = $voteCounts[NEG_VOTE];
 	
 	} else {
 		$response[ERROR_TAG] = true;
-		$response[URL_TAG] = "/venue/tally/user";
+		$response[PATH_TAG] = "/venue/tally/user";
 		$response[MESSAGE_TAG] = "There was an error, user's vote tallies not retrieved";
 	}
 
@@ -292,11 +292,11 @@ $app->post('/recipe/vote', function() use ($app) {
 
 	if ($success) {
 		$response[ERROR_TAG] = false;
-		$response[URL_TAG] = "/recipe/vote";
+		$response[PATH_TAG] = "/recipe/vote";
 		$response[MESSAGE_TAG] = "Successfully posted vote for ". $recipeName;
 	} else {
 		$response[ERROR_TAG] = true;
-		$response[URL_TAG] = "/recipe/vote";
+		$response[PATH_TAG] = "/recipe/vote";
 		$response[MESSAGE_TAG] = "There was an error, vote for ". $recipeName ." not posted"; 
 	}
 
@@ -333,14 +333,14 @@ $app->post('/recipe/tally', function() use ($app) {
 		}
 	
 		$response[ERROR_TAG] = false;
-		$response[URL_TAG] = "/recipe/tally";
+		$response[PATH_TAG] = "/recipe/tally";
 		$response[MESSAGE_TAG] = "Successfully retrieved vote tallies for ". $recipeName;
 		$response[POS_VOTE] = $voteCounts[POS_VOTE];
 		$response[NEG_VOTE] = $voteCounts[NEG_VOTE];
 	
 	} else {
 		$response[ERROR_TAG] = true;
-		$response[URL_TAG] = "/recipe/tally";
+		$response[PATH_TAG] = "/recipe/tally";
 		$response[MESSAGE_TAG] = "There was an error, vote tallies for ". $recipeName ." not retrieved";
 	}
 
@@ -377,14 +377,14 @@ $app->post('/recipe/tally/user', function() use ($app) {
 		}
 	
 		$response[ERROR_TAG] = false;
-		$response[URL_TAG] = "/recipe/tally/user";
+		$response[PATH_TAG] = "/recipe/tally/user";
 		$response[MESSAGE_TAG] = "Successfully retrieved user's recipe vote tallies";
 		$response[POS_VOTE] = $voteCounts[POS_VOTE];
 		$response[NEG_VOTE] = $voteCounts[NEG_VOTE];
 	
 	} else {
 		$response[ERROR_TAG] = true;
-		$response[URL_TAG] = "/recipe/tally/user";
+		$response[PATH_TAG] = "/recipe/tally/user";
 		$response[MESSAGE_TAG] = "There was an error, user's recipe vote tallies not retrieved";
 	}
 

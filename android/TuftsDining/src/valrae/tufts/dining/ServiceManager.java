@@ -32,26 +32,20 @@ import android.util.Log;
 public class ServiceManager {
 	
 	// HTTP call URLs
-	private final String VOTE_URL 			= "http://hellobiped.com/tufts_dining/vote";
-	private final String TALLY_VOTES_URL 	= "http://hellobiped.com/tufts_dining/tally_votes";
-	private final String RATE_URL 			= "http://hellobiped.com/tufts_dining/rate";
-	private final String TALLY_RATINGS_URL 	= "http://hellobiped.com/tufts_dining/tally_ratings";
+	private final String GENERIC_URL = "http://hellobiped.com/tufts_dining/";
+	private final String[] URLS;
 
-	public final static String GET  = HttpGet.METHOD_NAME;
-	public final static String POST = HttpPost.METHOD_NAME;
+	private final String POST = HttpPost.METHOD_NAME;
+	private final String GET = HttpGet.METHOD_NAME;
 	
 	// of Activity
 	private final Context CONTEXT;
-
-	// Functionality of Activity
-	private final String FUNCTIONALITY;
-	private final String COMPARISON;
-	private final String RATING;
-	
+		
 	private final String TAG = "ServiceManager";
 	
-	private static String mPostJson;
-	private static String mGetJson;
+	private static String mJson;
+	
+	private static String mPath;
 	
 	private NetworkInfo networkInfo;
 	private ProgressDialog pDialog;
@@ -70,17 +64,16 @@ public class ServiceManager {
 		public void handleMessage(Message msg) {
 			ServiceManager target = mTarget.get(); 
             
-			if (target != null) {
+			if (target != null && serviceListener != null) {
 				switch (msg.what) {
-				case 0:
-					if (serviceListener != null)
-						target.alertFragment(mJson);
+				case 0:	// error		// TODO as of yet, unused
+						target.serviceError("Error in ServiceManager");
 					break;
-				case 1:
-					if (serviceListener != null)
-						target.alertFragment(mJson);
+				case 1:	// successful response
+						target.serviceAlert(mJson, mPath);
 					break;
-				default:
+				default: // error
+						target.serviceError("Error in ServiceManager");
 					break;
 				}
             }
@@ -93,13 +86,11 @@ public class ServiceManager {
 	 * @param ServiceListener 
 	 * @param function is functionality of the activity that is using ServiceManager
 	 */
-	public ServiceManager (Context context, String functionality) {
+	public ServiceManager (Context context) {
 		Log.i(TAG, "new ServiceManager()");
 		
 		this.CONTEXT = context;
-		this.FUNCTIONALITY = functionality;
-		this.COMPARISON = ComparisonFragment.FUNCTIONALITY;
-		this.RATING = RatingFragment.FUNCTIONALITY;
+		this.URLS = CONTEXT.getResources().getStringArray(R.array.url_array);
 		this.handler = new myHandler(this);
 	}
 
@@ -122,29 +113,40 @@ public class ServiceManager {
 		}
 	}
 	
-	public void postVote(final List<NameValuePair> data) {
+	/**
+	 * 
+	 * @param data
+	 */
+	public void startService (final List<NameValuePair> data, String path) {
+		mPath = path;
 		data.add(new BasicNameValuePair(
-				CONTEXT.getResources().getString(R.string.mac_key), 
-				getMac()));
+				CONTEXT.getResources().getString(R.string.mac_key), getMac()));
 		Log.i(TAG, "data in startService: " + data.toString());
 		
-		String message = "Making your voice heard...";
+		// Manage dialog
+		String message = "Frolicking in data...";
+		for (int i = 0; i < URLS.length; i++) {
+			if (path.equals(URLS[i])) {
+				if (i == 0 || i == 1 || i == 2) {			// create paths
+					message = "Spreading your fame...";
+				} else if (i == 3 || i == 7) {				// vote paths
+					message = "Making your voice heard...";
+				} else if (i == 4 || i == 5 || i == 6 
+						|| i == 8 || i == 9 || i == 10) {	// tally paths
+					message = "Fetching numbers";
+				}
+			}
+		}
 		manageDialog(message);
 		
 		Thread thread = new Thread()
 		{
 			@Override
 			public void run() {
-				// make POST >> returns JSON response
-				if (FUNCTIONALITY.equals(COMPARISON)) {
-					mPostJson = makeServiceCall(VOTE_URL, POST, data);
-					Log.d("ServiceManager", FUNCTIONALITY + " POST response > " + mPostJson);
-				
-				} else if (FUNCTIONALITY.equals(RATING)) {
-					mPostJson = makeServiceCall(RATE_URL, POST, data);
-					Log.d("ServiceManager", FUNCTIONALITY + " POST response > " + mPostJson);
-				}
-				handler.sendEmptyMessage(0);
+
+				mJson = makeServiceCall(GENERIC_URL + mPath, POST, data);
+				Log.d("ServiceManager", mPath + " response > " + mJson);
+				handler.sendEmptyMessage(1);	// TODO
 
 				// TODO
 //				handler.post(new Runnable() {
@@ -154,34 +156,6 @@ public class ServiceManager {
 //					}
 //				});
 			}				
-		};
-		thread.start();
-		try {
-			thread.join();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	public void getTally() {
-		String message = "Fetching numbers...";
-		manageDialog(message);
-
-		Thread thread = new Thread()
-		{
-			@Override
-			public void run() {
-				// make GET >> returns JSON response
-				if (FUNCTIONALITY.equals(COMPARISON)) {									
-					mGetJson = makeServiceCall(TALLY_VOTES_URL, GET);
-					Log.d("ServiceManager", FUNCTIONALITY + " GET response > " + mGetJson);
-				
-				} else if (FUNCTIONALITY.equals(RATING)) {
-					mGetJson = makeServiceCall(TALLY_RATINGS_URL, GET);
-					Log.d("ServiceManager", FUNCTIONALITY + " GET response > " + mGetJson);
-				}
-				handler.sendEmptyMessage(1);
-			}	   
 		};
 		thread.start();
 		try {
@@ -205,7 +179,7 @@ public class ServiceManager {
 				@Override
 				public void onCancel(DialogInterface arg0) {
 					Log.i(TAG, "ProgressDialog canceled");
-					cancelAlert();
+					serviceCancel();
 				}
 				
 			});
@@ -320,23 +294,22 @@ public class ServiceManager {
 		serviceListener = listener;
 	}
 	
-	public void alertFragment(String method, String json) {
-		serviceListener.onServiceComplete(method, json);
+	public void serviceAlert (String json, String mPath) {
+		serviceListener.onServiceComplete(json, mPath);
 	}
 	
-	public void cancelAlert() {
+	public void serviceCancel() {
 		serviceListener.onCancel();
+	}
+	
+	public void serviceError (String error) {	// TODO as of yet, unused
+		serviceListener.onError(error);
 	}
 	
 	/* -------------------------- Getter methods -------------------------- */
 	
-	// get POST results
-	public String getPOSTJson() {
-		return mPostJson;
-	}
-	
-	// get GET results
-	public String getGETJson() {
-		return mGetJson;
+	// get JSON results
+	public String getJson() {
+		return mJson;
 	}
 }

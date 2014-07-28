@@ -17,6 +17,7 @@ public final class R {
         public static final int abc_slide_out_top=0x7f040005;
     }
     public static final class array {
+        public static final int url_array=0x7f0c0001;
         public static final int venues_array=0x7f0c0000;
     }
     public static final class attr {
@@ -1111,8 +1112,6 @@ containing a value of this type.
         public static final int action_venue=0x7f05004e;
         public static final int activity_chooser_view_content=0x7f050025;
         public static final int always=0x7f05000b;
-        public static final int bad_counter=0x7f05004c;
-        public static final int bad_stats=0x7f05004b;
         public static final int beginning=0x7f050011;
         public static final int button_high=0x7f050040;
         public static final int button_low=0x7f050046;
@@ -1135,8 +1134,6 @@ containing a value of this type.
         public static final int end=0x7f050013;
         public static final int expand_activities_button=0x7f050026;
         public static final int expanded_menu=0x7f05002c;
-        public static final int good_counter=0x7f05004a;
-        public static final int good_stats=0x7f050049;
         public static final int home=0x7f050014;
         public static final int homeAsUp=0x7f050005;
         public static final int icon=0x7f05002a;
@@ -1146,9 +1143,13 @@ containing a value of this type.
         public static final int list_item=0x7f050029;
         public static final int middle=0x7f050012;
         public static final int navigation_drawer=0x7f05003e;
+        public static final int negative_counter=0x7f05004c;
+        public static final int negative_stats=0x7f05004b;
         public static final int never=0x7f050009;
         public static final int none=0x7f050010;
         public static final int normal=0x7f050000;
+        public static final int positive_counter=0x7f05004a;
+        public static final int positive_stats=0x7f050049;
         public static final int progress_circular=0x7f050018;
         public static final int progress_horizontal=0x7f050019;
         public static final int radio=0x7f05002f;
@@ -1283,7 +1284,7 @@ containing a value of this type.
         public static final int action_settings=0x7f0a0014;
         /**  - - - - - - - - - - - Menus - - - - - - - - - - - 
          */
-        public static final int action_venue=0x7f0a0028;
+        public static final int action_venue=0x7f0a0030;
         /**  App Stuff 
          */
         public static final int app_name=0x7f0a000d;
@@ -1299,50 +1300,46 @@ containing a value of this type.
          */
         public static final int comparison=0x7f0a0018;
         public static final int dewick_stats=0x7f0a001a;
+        public static final int error_key=0x7f0a0025;
+        public static final int failed_vote=0x7f0a002c;
         public static final int good_stats=0x7f0a0021;
         /**  Default 
          */
         public static final int instructions=0x7f0a0015;
+        /**  - - - - - - - - - - - HTTP Protocol  - - - - - - - - - - - 
+ Keys 
+         */
+        public static final int mac_key=0x7f0a0023;
+        public static final int message_key=0x7f0a0024;
         public static final int navigation_drawer_close=0x7f0a000f;
         public static final int navigation_drawer_open=0x7f0a000e;
-        public static final int negative_button=0x7f0a002b;
-        /**  - - - - - - - - - - - HTTP Protocol  - - - - - - - - - - - 
- Keys for ArrayList 
-    <string name="dewick_key">dewick</string>
-    <string name="carm_key">carm</string>
-    <string name="good_key">good</string>
-    <string name="bad_key">bad</string>
-    <string name="mac_key">mac_address</string>
-    <string name="message_key">message</string>
-    <string name="error_key">message</string>
-    
-    <string name="post_message_key">message</string>
-    <string name="post_error_key">error</string>
-    
-    <string name="get_message_key">message</string> 
-    <string name="get_error_key">error</string> 
- - - - - - - - - - - - Toasts - - - - - - - - - - - 
+        public static final int negative_button=0x7f0a0033;
+        public static final int negative_key=0x7f0a0028;
+        /**  - - - - - - - - - - - Toasts - - - - - - - - - - - 
          */
-        public static final int no_data=0x7f0a0023;
-        public static final int no_post=0x7f0a0024;
-        public static final int positive_button=0x7f0a002a;
-        public static final int process_canceled=0x7f0a0025;
+        public static final int no_data=0x7f0a0029;
+        public static final int no_post=0x7f0a002a;
+        public static final int path_key=0x7f0a0026;
+        public static final int positive_button=0x7f0a0032;
+        public static final int positive_key=0x7f0a0027;
+        public static final int process_canceled=0x7f0a002d;
         /**  Rating 
          */
         public static final int rating=0x7f0a001e;
-        public static final int recent_message=0x7f0a0026;
+        public static final int recency_error=0x7f0a002f;
+        public static final int recent_message=0x7f0a002e;
         public static final int reminder=0x7f0a0016;
+        public static final int successful_vote=0x7f0a002b;
         /**  - - - - - - - - - - - FRAGMENTS  - - - - - - - - - - - 
  Navigation 
          */
         public static final int title_comparison=0x7f0a0011;
         public static final int title_rating=0x7f0a0012;
         public static final int title_section3=0x7f0a0013;
-        public static final int too_recent=0x7f0a0027;
         public static final int underscore=0x7f0a001d;
         /**  - - - - - - - - - - - Dialogs - - - - - - - - - - - 
          */
-        public static final int venue_dialog=0x7f0a0029;
+        public static final int venue_dialog=0x7f0a0031;
         public static final int wrong=0x7f0a0017;
     }
     public static final class style {

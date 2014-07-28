@@ -54,7 +54,7 @@ define('TBL_USER_RECIPE_VOTES', 'user_recipe_votes');
 
 // Response constants
 define('ERROR_TAG', 'error');
-define('URL_TAG', 'url');
+define('PATH_TAG', 'path');
 define('MESSAGE_TAG', 'message');
 
 // Boolean constants
