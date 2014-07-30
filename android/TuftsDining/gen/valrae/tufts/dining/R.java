@@ -17,7 +17,7 @@ public final class R {
         public static final int abc_slide_out_top=0x7f040005;
     }
     public static final class array {
-        public static final int url_array=0x7f0c0001;
+        public static final int paths_array=0x7f0c0001;
         public static final int venues_array=0x7f0c0000;
     }
     public static final class attr {
@@ -1108,24 +1108,19 @@ containing a value of this type.
         public static final int action_menu_divider=0x7f050016;
         public static final int action_menu_presenter=0x7f050017;
         public static final int action_mode_close_button=0x7f050024;
-        public static final int action_settings=0x7f05004d;
-        public static final int action_venue=0x7f05004e;
+        public static final int action_settings=0x7f050048;
+        public static final int action_venue=0x7f050049;
         public static final int activity_chooser_view_content=0x7f050025;
         public static final int always=0x7f05000b;
         public static final int beginning=0x7f050011;
-        public static final int button_high=0x7f050040;
-        public static final int button_low=0x7f050046;
-        public static final int carm_counter=0x7f050045;
-        public static final int carm_stats=0x7f050044;
+        public static final int button_high=0x7f050041;
+        public static final int button_low=0x7f050047;
         public static final int checkbox=0x7f05002d;
         public static final int collapseActionView=0x7f05000d;
         public static final int container=0x7f05003d;
-        public static final int container_comparison=0x7f05003f;
-        public static final int container_rating=0x7f050048;
-        public static final int counters=0x7f050041;
+        public static final int container_rating=0x7f050040;
+        public static final int counters=0x7f050042;
         public static final int default_activity_button=0x7f050028;
-        public static final int dewick_counter=0x7f050043;
-        public static final int dewick_stats=0x7f050042;
         public static final int dialog=0x7f05000e;
         public static final int disableHome=0x7f050008;
         public static final int drawer_layout=0x7f05003c;
@@ -1143,13 +1138,13 @@ containing a value of this type.
         public static final int list_item=0x7f050029;
         public static final int middle=0x7f050012;
         public static final int navigation_drawer=0x7f05003e;
-        public static final int negative_counter=0x7f05004c;
-        public static final int negative_stats=0x7f05004b;
+        public static final int negative_counter=0x7f050046;
+        public static final int negative_stats=0x7f050045;
         public static final int never=0x7f050009;
         public static final int none=0x7f050010;
         public static final int normal=0x7f050000;
-        public static final int positive_counter=0x7f05004a;
-        public static final int positive_stats=0x7f050049;
+        public static final int positive_counter=0x7f050044;
+        public static final int positive_stats=0x7f050043;
         public static final int progress_circular=0x7f050018;
         public static final int progress_horizontal=0x7f050019;
         public static final int radio=0x7f05002f;
@@ -1163,7 +1158,7 @@ containing a value of this type.
         public static final int search_plate=0x7f050036;
         public static final int search_src_text=0x7f050037;
         public static final int search_voice_btn=0x7f05003b;
-        public static final int section_label=0x7f050047;
+        public static final int section_label=0x7f05003f;
         public static final int shortcut=0x7f05002e;
         public static final int showCustom=0x7f050007;
         public static final int showHome=0x7f050004;
@@ -1228,11 +1223,10 @@ containing a value of this type.
         public static final int abc_search_view=0x7f030016;
         public static final int abc_simple_decor=0x7f030017;
         public static final int activity_main=0x7f030018;
-        public static final int fragment_comparison=0x7f030019;
-        public static final int fragment_main=0x7f03001a;
-        public static final int fragment_navigation_drawer=0x7f03001b;
-        public static final int fragment_rating=0x7f03001c;
-        public static final int support_simple_spinner_dropdown_item=0x7f03001d;
+        public static final int fragment_main=0x7f030019;
+        public static final int fragment_navigation_drawer=0x7f03001a;
+        public static final int fragment_rating=0x7f03001b;
+        public static final int support_simple_spinner_dropdown_item=0x7f03001c;
     }
     public static final class menu {
         public static final int global=0x7f0d0000;
@@ -1281,66 +1275,60 @@ containing a value of this type.
          */
         public static final int abc_shareactionprovider_share_with_application=0x7f0a000b;
         public static final int action_example=0x7f0a0010;
-        public static final int action_settings=0x7f0a0014;
+        public static final int action_settings=0x7f0a0013;
         /**  - - - - - - - - - - - Menus - - - - - - - - - - - 
          */
-        public static final int action_venue=0x7f0a0030;
+        public static final int action_venue=0x7f0a002c;
         /**  App Stuff 
          */
         public static final int app_name=0x7f0a000d;
-        public static final int bad_stats=0x7f0a0022;
+        public static final int bad_stats=0x7f0a001b;
         /**  Change to "APPROVED!" stamp image 
          */
-        public static final int button_bad=0x7f0a0020;
-        public static final int button_carm=0x7f0a001b;
-        public static final int button_dewick=0x7f0a0019;
-        public static final int button_good=0x7f0a001f;
-        public static final int carm_stats=0x7f0a001c;
-        /**  Comparison 
-         */
-        public static final int comparison=0x7f0a0018;
-        public static final int dewick_stats=0x7f0a001a;
-        public static final int error_key=0x7f0a0025;
-        public static final int failed_vote=0x7f0a002c;
-        public static final int good_stats=0x7f0a0021;
+        public static final int button_bad=0x7f0a0019;
+        public static final int button_good=0x7f0a0018;
+        public static final int error_key=0x7f0a0020;
+        public static final int failed_vote=0x7f0a0028;
+        public static final int good_stats=0x7f0a001a;
         /**  Default 
          */
-        public static final int instructions=0x7f0a0015;
+        public static final int instructions=0x7f0a0014;
+        public static final int ipv4_key=0x7f0a001d;
+        public static final int ipv6_key=0x7f0a001e;
         /**  - - - - - - - - - - - HTTP Protocol  - - - - - - - - - - - 
  Keys 
          */
-        public static final int mac_key=0x7f0a0023;
-        public static final int message_key=0x7f0a0024;
+        public static final int mac_key=0x7f0a001c;
+        public static final int message_key=0x7f0a001f;
+        public static final int name_key=0x7f0a0022;
         public static final int navigation_drawer_close=0x7f0a000f;
         public static final int navigation_drawer_open=0x7f0a000e;
-        public static final int negative_button=0x7f0a0033;
-        public static final int negative_key=0x7f0a0028;
+        public static final int negative_button=0x7f0a002f;
+        public static final int negative_key=0x7f0a0024;
         /**  - - - - - - - - - - - Toasts - - - - - - - - - - - 
          */
-        public static final int no_data=0x7f0a0029;
-        public static final int no_post=0x7f0a002a;
-        public static final int path_key=0x7f0a0026;
-        public static final int positive_button=0x7f0a0032;
-        public static final int positive_key=0x7f0a0027;
-        public static final int process_canceled=0x7f0a002d;
+        public static final int no_data=0x7f0a0025;
+        public static final int no_post=0x7f0a0026;
+        public static final int path_key=0x7f0a0021;
+        public static final int positive_button=0x7f0a002e;
+        public static final int positive_key=0x7f0a0023;
+        public static final int process_canceled=0x7f0a0029;
         /**  Rating 
          */
-        public static final int rating=0x7f0a001e;
-        public static final int recency_error=0x7f0a002f;
-        public static final int recent_message=0x7f0a002e;
-        public static final int reminder=0x7f0a0016;
-        public static final int successful_vote=0x7f0a002b;
+        public static final int rating=0x7f0a0017;
+        public static final int recency_error=0x7f0a002b;
+        public static final int recent_message=0x7f0a002a;
+        public static final int reminder=0x7f0a0015;
+        public static final int successful_vote=0x7f0a0027;
         /**  - - - - - - - - - - - FRAGMENTS  - - - - - - - - - - - 
  Navigation 
          */
-        public static final int title_comparison=0x7f0a0011;
-        public static final int title_rating=0x7f0a0012;
-        public static final int title_section3=0x7f0a0013;
-        public static final int underscore=0x7f0a001d;
+        public static final int title_rating=0x7f0a0011;
+        public static final int title_where_to=0x7f0a0012;
         /**  - - - - - - - - - - - Dialogs - - - - - - - - - - - 
          */
-        public static final int venue_dialog=0x7f0a0031;
-        public static final int wrong=0x7f0a0017;
+        public static final int venue_dialog=0x7f0a002d;
+        public static final int wrong=0x7f0a0016;
     }
     public static final class style {
         /** 

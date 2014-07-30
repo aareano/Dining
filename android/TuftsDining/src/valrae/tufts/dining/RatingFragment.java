@@ -2,18 +2,18 @@ package valrae.tufts.dining;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.app.Activity;
+import valrae.tufts.dining.VenueDialogFragment.VenueDialogListener;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -31,17 +31,9 @@ import android.widget.Toast;
  * @author Aaron Bowen
  */
 
-// TODO create sharepreference IS_USER
-
-// Flow:
-// 
-// User taps button >> HTTP Post venue vote >> HTTP Post venue tallies >> update display
-// 						
-//
-
 public class RatingFragment extends Fragment implements ServiceListener {
 
-	private final String TAG = "ComparisonFragment";
+	private final String TAG = "RatingFragment";
 	
 	// Functionality
 	private final String[] PATHS;
@@ -55,14 +47,17 @@ public class RatingFragment extends Fragment implements ServiceListener {
     private final String POS_KEY;
     private final String NEG_KEY;
     
-    private ServiceManager mServer;
-    
     // Preferences
     private static final String PREF_LAST_VENUE = "last_venue_selected";
     private static final String PREF_IS_DB_USER = "is_user_in_database";
+
+    private ServiceManager mServer;
     
     // Name of current venue
     private String mVenue;
+    private VenueDialogFragment venueDialog;
+
+	private Menu mMenu; 
     
     public static RatingFragment newInstance(Context context) {
     	return new RatingFragment(context);
@@ -77,16 +72,19 @@ public class RatingFragment extends Fragment implements ServiceListener {
 		PATH_KEY 	= CONTEXT.getResources().getString(R.string.path_key);
 		POS_KEY 	= CONTEXT.getResources().getString(R.string.negative_key);
 		NEG_KEY 	= CONTEXT.getResources().getString(R.string.positive_key);
-		PATHS 		= CONTEXT.getResources().getStringArray(R.array.url_array);
+		PATHS 		= CONTEXT.getResources().getStringArray(R.array.paths_array);
 		
 		mServer 	= new ServiceManager(CONTEXT);
+		mServer.setServiceListener(this);
 	}
+
+    public interface CallbackListener {
+    	void setActionTitle(String title, Menu menu);
+    }
     
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		setHasOptionsMenu(true);
-		updateVenue();
-
 		super.onCreate(savedInstanceState);
 	}
 	
@@ -94,8 +92,6 @@ public class RatingFragment extends Fragment implements ServiceListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
     		Bundle savedInstanceState) {
     	View rootView = inflater.inflate(R.layout.fragment_rating, container, false);
-    	updateVenue();
-    	
     	return rootView;
     }
 
@@ -103,18 +99,18 @@ public class RatingFragment extends Fragment implements ServiceListener {
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 //		if (!mNavigationDrawerFragment.isDrawerOpen()) {	// TODO if drawer is open, let it decide
         inflater.inflate(R.menu.rating, menu);
+        mMenu = menu;
+        updateVenue();
 		super.onCreateOptionsMenu(menu, inflater);
 	}
 
 	@Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_venue) {
-        	Log.d(TAG, "show venue dialog");
-        	
-    		DialogFragment newFragment = new VenueDialogFragment();
-    	    newFragment.show(getFragmentManager(), "VenueDialogFragment");
+        	Log.i(TAG, "show VenueDialogFragment()");
+    		venueDialog = new VenueDialogFragment();
+    	    venueDialog.show(getFragmentManager(), "VenueDialogFragment");
         }
-
         return super.onOptionsItemSelected(item);
     }
 	
@@ -129,18 +125,18 @@ public class RatingFragment extends Fragment implements ServiceListener {
 	     * something. 
 	     */
 	    
-	    String[] urls = CONTEXT.getResources().getStringArray(R.array.url_array);
+	    String name = CONTEXT.getResources().getString(R.string.name_key);
 
-	    List<NameValuePair> data = new ArrayList<NameValuePair>();
-	    data.add(new BasicNameValuePair("name", mVenue));	// TODO make a resource
-	    
-	    if (mServer.isConnected()) {
-	    	mServer.startService(data, urls[4]);		// more robust url get thing
-	    	mServer.close();
+	    if (mVenue != null) {
+		    List<NameValuePair> data = new ArrayList<NameValuePair>();
+		    data.add(new BasicNameValuePair(name, mVenue));
+		    
+		    if (mServer.isConnected()) {
+		    	mServer.startService(data, PATHS[4]);
+		    	mServer.close();
+		    }
 	    }
 	}
-	
-	
 	
 	public void onClick(View button) {
 		Log.i(TAG, "onClick()");
@@ -150,7 +146,6 @@ public class RatingFragment extends Fragment implements ServiceListener {
 		// Get my data
 		String pos = "0";
 		String neg = "0";
-		
 		if (buttonId == R.id.button_high){
 			pos = "1";
 		} else if (buttonId == R.id.button_low) {
@@ -158,30 +153,66 @@ public class RatingFragment extends Fragment implements ServiceListener {
 		}
 		
 		// Add my data
-		List<NameValuePair> data = new ArrayList<NameValuePair>();
-		data.add(new BasicNameValuePair(
+		List<NameValuePair> data1 = new ArrayList<NameValuePair>();
+		data1.add(new BasicNameValuePair(
 				CONTEXT.getResources().getString(R.string.positive_key), pos));
-		data.add(new BasicNameValuePair(
+		data1.add(new BasicNameValuePair(
 				CONTEXT.getResources().getString(R.string.negative_key), neg));
 		
+		final List<NameValuePair> data = data1;	// for venueDialogFragment use
+		data1 = null;
 		
 		// ensure is db user
-		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(CONTEXT);
+		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(
+				CONTEXT);
 		boolean isUser = sp.getBoolean(PREF_IS_DB_USER, false);
-    	
+
     	if (!isUser) {
     		List<NameValuePair> userData = new ArrayList<NameValuePair>();
     		mServer.startService(userData, PATHS[0]);
     		mServer.close();
+    		// TODO play around with TimeUnit for the delaying of things
     	}
     	
-    	//	TODO only allow vote if mVenue is not null
-    	
+    	// only allow vote if mVenue is not null
     	// post vote, counters are updated automatically
-    	if (mServer.isConnected()) {
-			mServer.startService(data, PATHS[3]);
-    		mServer.close();
-		}
+    	if (mVenue != null && isUser) {
+	    	if (mServer.isConnected()) {
+				mServer.startService(data, PATHS[3]);
+	    		mServer.close();
+			}
+    	} else if (mVenue == null) {
+    		venueDialog = new VenueDialogFragment();
+    		venueDialog.setVenueDialogListener(new VenueDialogListener() {
+
+				@Override
+				public void onSelectionMade(int which) {
+					String[] venues = CONTEXT.getResources().getStringArray(
+							R.array.venues_array);
+					mVenue = venues[which];
+					
+					SharedPreferences sp = PreferenceManager
+			                .getDefaultSharedPreferences(CONTEXT);
+			        sp.edit().putString(PREF_LAST_VENUE, null).commit();
+			        
+			        updateVenue();
+			        
+			        // now post vote
+			        if (mVenue != null) {
+				    	if (mServer.isConnected()) {
+							mServer.startService(data, PATHS[3]);
+				    		mServer.close();
+						}
+			        }
+				}
+
+				@Override
+				public void onDialogNegativeClick() {
+					venueDialog.dismiss();
+				}
+    		});
+    	    venueDialog.show(getFragmentManager(), "VenueDialogFragment");
+    	}
    	}
 	
 	/* ------------------------- JSON Parse methods ------------------------- */
@@ -282,8 +313,10 @@ public class RatingFragment extends Fragment implements ServiceListener {
     		String posVotes = getValueFromKey(pairs, POS_KEY);
     		String negVotes = getValueFromKey(pairs, NEG_KEY);
     		
-    		((TextView) (((Activity) CONTEXT).findViewById(R.id.positive_counter))).setText(posVotes);
-    		((TextView) (((Activity) CONTEXT).findViewById(R.id.negative_counter))).setText(negVotes);
+    		((TextView) getActivity().findViewById(
+    				R.id.positive_counter)).setText(posVotes);
+    		((TextView) getActivity().findViewById(
+    				R.id.negative_counter)).setText(negVotes);
     	
     	// get error happened
     	} else {
@@ -295,96 +328,91 @@ public class RatingFragment extends Fragment implements ServiceListener {
     /**
      * Updates the MenuItem to reflect venue selection 
      */
-    public void updateVenue() {						// TODO if null, prompt user to select venue
-    	SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(CONTEXT);
+    public void updateVenue() {
+    	SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(
+    			CONTEXT);
     	mVenue = sp.getString(PREF_LAST_VENUE, null);
+    	Log.d(TAG + "::updateVenue()", "mVenue = " + mVenue);
     	
     	if (mVenue != null) {
-    		Log.d(TAG, "");	// TODO
-    		((MenuItem) ((Activity) CONTEXT).findViewById(
-    				R.id.action_venue)).setTitle(mVenue);
+    		((MenuItem) mMenu.findItem(R.id.action_venue)).setTitle(mVenue);
     	} else {
-    		Log.d(TAG, "");	// TODO
-    		String selectVenue = CONTEXT.getResources().getString(R.string.action_venue);
-    		((MenuItem) ((Activity) CONTEXT).findViewById(
-    				R.id.action_venue)).setTitle(selectVenue);
+    		String selectVenue = CONTEXT.getResources().getString(
+    				R.string.action_venue);
+    		((MenuItem) mMenu.findItem(R.id.action_venue)).setTitle(selectVenue);
     	}
     }
 
-    /* ------------------------- Dialog methods ------------------------- */
+    /* ------------------------- Venue Dialog methods ------------------------- */
     
 	public void onSelectionMade(int which) {
-		String[] venues = CONTEXT.getResources().getStringArray(R.array.venues_array);
+		venueDialog.dismiss();
+		
+		String[] venues = CONTEXT.getResources().getStringArray(
+				R.array.venues_array);
 		mVenue = venues[which];
 		
 		SharedPreferences sp = PreferenceManager
                 .getDefaultSharedPreferences(CONTEXT);
-        sp.edit().putString(PREF_LAST_VENUE, null).commit();
+        sp.edit().putString(PREF_LAST_VENUE, mVenue).commit();
         
         updateVenue();
 	}
 	
 	public void onDialogNegativeClick() {
-		
+		venueDialog.dismiss();
 	}
 	
-	/* ------------------------- Other methods ------------------------- */
-	
-	/**
-	 * Extracts value with name of parameter from List<NameValuePair>
-	 * @param list
-	 * @param key
-	 * @return value with key = 'key'
-	 */
-	public String getValueFromKey(List<NameValuePair> list, String key) {
-		
-		for (int i = 0; i < list.size(); i++) {
-			if (list.get(i).getName().equals(key))
-				return list.get(i).getValue();
-		}
-		// nothing found
-		return null;
-	}
-
+	/* ------------------------- ServiceManager Callback methods ------------------------- */
 	
 	@Override
-	public void onServiceComplete(String json, String path) {	// TODO path is stored in json, redudant
+	public void onServiceComplete(String json) {	// TODO path is stored in json, redudant
 		Log.i(TAG, "onServiceComplete()");
 		mServer.close();
 		
 		List<NameValuePair> data = new ArrayList<NameValuePair>();
 		data = parseJson(json);
+		String path = getValueFromKey(data, PATH_KEY);
 		
 		for (int i = 0; i < PATHS.length; i++) {
 			if (PATHS[i].equals(path)) {
 				switch (i) {
 				case 0:		// create user
 					if (getValueFromKey(data, ERROR_KEY).equals("false")) {
-						SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(CONTEXT);
+						SharedPreferences sp = PreferenceManager
+								.getDefaultSharedPreferences(CONTEXT);
 						sp.edit().putBoolean(PREF_IS_DB_USER, true).commit();
 					} else {
-						String text = "You appear to be on the naughty list and are\ntherefore not allowed to vote.";
+						String text = "You appear to be on the naughty " +
+								"list and are\ntherefore not allowed to vote.";
 						Toast.makeText(CONTEXT, text, Toast.LENGTH_LONG).show();
 						Log.e(TAG + "::onServiceComplete()", data.toString());
 					}
 					break;
 				case 3:		// venue vote
 					if (getValueFromKey(data, ERROR_KEY).equals("false")) {
-						String text = CONTEXT.getResources().getString(R.string.successful_vote);
+						String text = CONTEXT.getResources().getString(
+								R.string.successful_vote);
 						Toast.makeText(CONTEXT, text, Toast.LENGTH_LONG).show();
 					
 					} else {
-						String recent = CONTEXT.getResources().getString(R.string.recent_message);
+						String recent = CONTEXT.getResources().getString(
+								R.string.recent_message);
 						
 						if  (getValueFromKey(data, MESSAGE_KEY).equals(recent)) {		// too recent
 							Log.e(TAG + "::onServiceComplete()", data.toString());
-							String text = CONTEXT.getResources().getString(R.string.recency_error);
-							Toast.makeText(CONTEXT, text, Toast.LENGTH_SHORT).show();
+							String text = CONTEXT.getResources().getString(
+									R.string.recency_error);
+							Toast.makeText(CONTEXT, text, 
+									Toast.LENGTH_SHORT).show();
 						
-						} else if (getValueFromKey(data, ERROR_KEY).equals("true")) {	// actual error
+						} else if (getValueFromKey(data, ERROR_KEY).equals(
+								"true")) {	// actual error
 							Log.e(TAG + "::onServiceComplete()", data.toString());
-							String text = CONTEXT.getResources().getString(R.string.failed_vote);
-							Toast.makeText(CONTEXT, text, Toast.LENGTH_LONG).show();
+							String text = CONTEXT.getResources().getString(
+									R.string.failed_vote);
+							Toast.makeText(CONTEXT, text, 
+									Toast.LENGTH_LONG).show();
 						}
 					}
 					break;
@@ -393,13 +421,14 @@ public class RatingFragment extends Fragment implements ServiceListener {
 						updateCounters(data);
 					else {
 						Log.e(TAG + "::onServiceComplete()", data.toString());
-						String text = CONTEXT.getResources().getString(R.string.no_data);
+						String text = CONTEXT.getResources().getString(
+								R.string.no_data);
 						Toast.makeText(CONTEXT, text, Toast.LENGTH_LONG).show();
 					}
 					break;
 					// TODO all other cases through 10
 				default:	// error
-					onError("An error happened in switch in onServiceComplete()");	// TODO uuugly
+					onError("An error happened in switch in onServiceComplete()");	// uuugly
 					break;
 				}
 			}
@@ -426,5 +455,23 @@ public class RatingFragment extends Fragment implements ServiceListener {
 		Log.d(TAG, error);
 		Toast.makeText(CONTEXT, "An error happened", 
 				Toast.LENGTH_SHORT).show();
+	}
+
+	/* ------------------------- Other methods ------------------------- */
+	
+	/**
+	 * Extracts value with name of parameter from List<NameValuePair>
+	 * @param list
+	 * @param key
+	 * @return value with key = 'key'
+	 */
+	public String getValueFromKey(List<NameValuePair> list, String key) {
+		
+		for (int i = 0; i < list.size(); i++) {
+			if (list.get(i).getName().equals(key))
+				return list.get(i).getValue();
+		}
+		// nothing found
+		return null;
 	}
 }

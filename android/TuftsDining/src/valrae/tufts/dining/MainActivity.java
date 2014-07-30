@@ -1,5 +1,6 @@
 package valrae.tufts.dining;
 
+import valrae.tufts.dining.RatingFragment.CallbackListener;
 import valrae.tufts.dining.VenueDialogFragment.VenueDialogListener;
 import android.app.Activity;
 import android.content.res.Configuration;
@@ -28,7 +29,6 @@ public class MainActivity extends ActionBarActivity
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
     private NavigationDrawerFragment mNavigationDrawerFragment;
-    private ComparisonFragment mComparisonFragment;
     private RatingFragment mRatingFragment;
     private static int sectionNum;
 
@@ -65,17 +65,12 @@ public class MainActivity extends ActionBarActivity
         	fTrans.replace(R.id.container, mRatingFragment)
         	.commit();
             break;
-        case 1:		// comparison
-        	mComparisonFragment = ComparisonFragment.newInstance(this);
-        	fTrans.replace(R.id.container, mComparisonFragment)
-        	.commit();
-            break;
-        case 2:		// where to eat? 
+        case 1:		// where to eat? 
 //        	mWhereToFragment = WhereToFragment.newInstance(this);	// TODO
 //        	fTrans.replace(R.id.container, mWhereToFragment)
 //        	.commit();
-        	fTrans.replace(R.id.container, PlaceholderFragment.newInstance(position))
-    			  .commit();
+//        	fTrans.replace(R.id.container, PlaceholderFragment.newInstance(position))
+//    			  .commit();
         	break;
     	default:	// default >> PlaceHolderFragment
     		fTrans.replace(R.id.container, PlaceholderFragment.newInstance(position))
@@ -91,10 +86,7 @@ public class MainActivity extends ActionBarActivity
             	mTitle = getString(R.string.title_rating);
                 break;
             case 2:
-            	mTitle = getString(R.string.title_comparison);
-                break;
-            case 3:
-                mTitle = getString(R.string.title_section3);
+                mTitle = getString(R.string.title_where_to);
                 break;
         }
     }
@@ -181,15 +173,6 @@ public class MainActivity extends ActionBarActivity
     }
     
 /* ------------------------- Button methods ------------------------- */
-    
-    /**
-     * Called by the comparison fragment's buttons
-     * @param button
-     */
-    public void onClickComparison (View button) {
-    	mComparisonFragment.onClick(button);
-    }
-    
     /**
      * Called by the rating fragment's buttons
      * @param button

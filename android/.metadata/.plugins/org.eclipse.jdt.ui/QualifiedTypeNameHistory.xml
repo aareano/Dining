@@ -4,8 +4,6 @@
 <fullyQualifiedTypeName name="android.os.CountDownTimer"/>
 <fullyQualifiedTypeName name="android.os.Message"/>
 <fullyQualifiedTypeName name="java.util.concurrent.ScheduledExecutorService"/>
-<fullyQualifiedTypeName name="java.util.concurrent.Executors"/>
-<fullyQualifiedTypeName name="java.util.concurrent.TimeUnit"/>
 <fullyQualifiedTypeName name="android.os.Handler"/>
 <fullyQualifiedTypeName name="valrae.tufts.dining.ServiceManager"/>
 <fullyQualifiedTypeName name="org.apache.http.params.HttpAbstractParamBean"/>
@@ -19,9 +17,25 @@
 <fullyQualifiedTypeName name="android.app.AlertDialog.Builder"/>
 <fullyQualifiedTypeName name="android.content.DialogInterface.OnClickListener"/>
 <fullyQualifiedTypeName name="android.app.Activity"/>
-<fullyQualifiedTypeName name="valrae.tufts.dining.VenueDialogFragment.VenueDialogListener"/>
-<fullyQualifiedTypeName name="android.support.v4.app.DialogFragment"/>
 <fullyQualifiedTypeName name="android.content.ClipData.Item"/>
 <fullyQualifiedTypeName name="valrae.tufts.dining.R.string"/>
+<fullyQualifiedTypeName name="android.support.v4.app.DialogFragment"/>
+<fullyQualifiedTypeName name="valrae.tufts.dining.VenueDialogFragment.VenueDialogListener"/>
 <fullyQualifiedTypeName name="valrae.tufts.dining.R.array"/>
+<fullyQualifiedTypeName name="java.util.Enumeration"/>
+<fullyQualifiedTypeName name="java.net.NetworkInterface"/>
+<fullyQualifiedTypeName name="java.net.InetAddress"/>
+<fullyQualifiedTypeName name="org.apache.http.conn.util.InetAddressUtils"/>
+<fullyQualifiedTypeName name="valrae.tufts.dining.R.menu"/>
+<fullyQualifiedTypeName name="valrae.tufts.dining.RatingFragment.CallbackListener"/>
+<fullyQualifiedTypeName name="valrae.tufts.dining.R.id"/>
+<fullyQualifiedTypeName name="java.lang.NullPointerException"/>
+<fullyQualifiedTypeName name="java.util.concurrent.Executors"/>
+<fullyQualifiedTypeName name="java.util.concurrent.ExecutorService"/>
+<fullyQualifiedTypeName name="java.util.concurrent.Future"/>
+<fullyQualifiedTypeName name="java.util.concurrent.TimeUnit"/>
+<fullyQualifiedTypeName name="java.util.concurrent.TimeoutException"/>
+<fullyQualifiedTypeName name="java.util.concurrent.FutureTask"/>
+<fullyQualifiedTypeName name="java.util.concurrent.Callable"/>
+<fullyQualifiedTypeName name="java.util.concurrent.ExecutionException"/>
 </qualifiedTypeNameHistroy>

@@ -10,23 +10,14 @@
     <!-- - - - - - - - - - - - FRAGMENTS  - - - - - - - - - - - -->
     
     <!-- Navigation -->
-    <string name="title_comparison">Comparison</string>
     <string name="title_rating">Rating</string>
-    <string name="title_section3">Section 3</string>
+    <string name="title_where_to">Where to eat</string>
     <string name="action_settings">Settings</string>
 
     <!-- Default -->
     <string name="instructions">Hit the drop down menu and choose an option.</string>
     <string name="reminder">Data is cool.</string>
     <string name="wrong">Something has gone terribly wrong.</string>
-    
-    <!-- Comparison -->
-    <string name="comparison">comparison</string>
-    <string name="button_dewick">Dewick</string>
-    <string name="dewick_stats" >Dewick:</string>
-    <string name="button_carm">Carmichael</string>
-    <string name="carm_stats" >Carmichael:</string>
-    <string name="underscore" >_____</string>
     
     <!-- Rating -->
     <string name="rating">rating</string>
@@ -39,9 +30,13 @@
     
     <!-- Keys -->
     <string name="mac_key">mac_addr</string>
+    <string name="ipv4_key">ipv4_addr</string>
+    <string name="ipv6_key">ipv6_addr</string>
+    
     <string name="message_key">message</string>
     <string name="error_key">error</string>
     <string name="path_key">path</string>
+    <string name="name_key">name</string>
     
     <string name="positive_key">positive</string>
     <string name="negative_key">negative</string>
