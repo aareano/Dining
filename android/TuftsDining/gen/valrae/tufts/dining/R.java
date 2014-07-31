@@ -1278,7 +1278,7 @@ containing a value of this type.
         public static final int action_settings=0x7f0a0013;
         /**  - - - - - - - - - - - Menus - - - - - - - - - - - 
          */
-        public static final int action_venue=0x7f0a002c;
+        public static final int action_venue=0x7f0a002d;
         /**  App Stuff 
          */
         public static final int app_name=0x7f0a000d;
@@ -1287,8 +1287,9 @@ containing a value of this type.
          */
         public static final int button_bad=0x7f0a0019;
         public static final int button_good=0x7f0a0018;
+        public static final int creating_user=0x7f0a0027;
         public static final int error_key=0x7f0a0020;
-        public static final int failed_vote=0x7f0a0028;
+        public static final int failed_vote=0x7f0a0029;
         public static final int good_stats=0x7f0a001a;
         /**  Default 
          */
@@ -1303,23 +1304,23 @@ containing a value of this type.
         public static final int name_key=0x7f0a0022;
         public static final int navigation_drawer_close=0x7f0a000f;
         public static final int navigation_drawer_open=0x7f0a000e;
-        public static final int negative_button=0x7f0a002f;
+        public static final int negative_button=0x7f0a0030;
         public static final int negative_key=0x7f0a0024;
         /**  - - - - - - - - - - - Toasts - - - - - - - - - - - 
          */
         public static final int no_data=0x7f0a0025;
         public static final int no_post=0x7f0a0026;
         public static final int path_key=0x7f0a0021;
-        public static final int positive_button=0x7f0a002e;
+        public static final int positive_button=0x7f0a002f;
         public static final int positive_key=0x7f0a0023;
-        public static final int process_canceled=0x7f0a0029;
+        public static final int process_canceled=0x7f0a002a;
         /**  Rating 
          */
         public static final int rating=0x7f0a0017;
-        public static final int recency_error=0x7f0a002b;
-        public static final int recent_message=0x7f0a002a;
+        public static final int recency_error=0x7f0a002c;
+        public static final int recent_message=0x7f0a002b;
         public static final int reminder=0x7f0a0015;
-        public static final int successful_vote=0x7f0a0027;
+        public static final int successful_vote=0x7f0a0028;
         /**  - - - - - - - - - - - FRAGMENTS  - - - - - - - - - - - 
  Navigation 
          */
@@ -1327,7 +1328,7 @@ containing a value of this type.
         public static final int title_where_to=0x7f0a0012;
         /**  - - - - - - - - - - - Dialogs - - - - - - - - - - - 
          */
-        public static final int venue_dialog=0x7f0a002d;
+        public static final int venue_dialog=0x7f0a002e;
         public static final int wrong=0x7f0a0016;
     }
     public static final class style {

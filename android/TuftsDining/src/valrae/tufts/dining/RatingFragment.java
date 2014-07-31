@@ -2,7 +2,6 @@ package valrae.tufts.dining;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -171,7 +170,9 @@ public class RatingFragment extends Fragment implements ServiceListener {
     		List<NameValuePair> userData = new ArrayList<NameValuePair>();
     		mServer.startService(userData, PATHS[0]);
     		mServer.close();
-    		// TODO play around with TimeUnit for the delaying of things
+    		
+    		String text = CONTEXT.getResources().getString(R.string.creating_user);
+    		Toast.makeText(CONTEXT, text, Toast.LENGTH_SHORT).show();
     	}
     	
     	// only allow vote if mVenue is not null
@@ -366,7 +367,7 @@ public class RatingFragment extends Fragment implements ServiceListener {
 	/* ------------------------- ServiceManager Callback methods ------------------------- */
 	
 	@Override
-	public void onServiceComplete(String json) {	// TODO path is stored in json, redudant
+	public void onServiceComplete(String json) {
 		Log.i(TAG, "onServiceComplete()");
 		mServer.close();
 		
@@ -384,7 +385,7 @@ public class RatingFragment extends Fragment implements ServiceListener {
 						sp.edit().putBoolean(PREF_IS_DB_USER, true).commit();
 					} else {
 						String text = "You appear to be on the naughty " +
-								"list and are\ntherefore not allowed to vote.";
+								"list and are\nnot allowed to vote.";
 						Toast.makeText(CONTEXT, text, Toast.LENGTH_LONG).show();
 						Log.e(TAG + "::onServiceComplete()", data.toString());
 					}
@@ -438,8 +439,7 @@ public class RatingFragment extends Fragment implements ServiceListener {
 		if (getValueFromKey(data, ERROR_KEY).equals("false"))
 			updateCounters(data);
 		else {
-			String text = CONTEXT.getResources().getString(R.string.no_data);
-			Toast.makeText(CONTEXT, text, Toast.LENGTH_LONG).show();
+			// do nothing. error was already accounted for in switch block.
 		}
 	}
 

@@ -200,7 +200,7 @@ public class ServiceManager {
 		ExecutorService executor = Executors.newSingleThreadExecutor();
 		Future<String> future = executor.submit(new Task());
 		try {
-			String testString = future.get(1, TimeUnit.SECONDS);	// waits at most 3 seconds for task completion
+			future.get(3, TimeUnit.SECONDS);	// waits at most 3 seconds for task completion
 		} catch (TimeoutException e) {
 			e.printStackTrace();
 			executor.shutdownNow();				// at 3 seconds, forces Task to shut down

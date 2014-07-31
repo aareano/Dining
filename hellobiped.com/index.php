@@ -29,6 +29,7 @@
 
 require_once './include/DbHandler.php';
 require_once './include/DbConnect.php';
+require_once './include/Config.php';
 require './libs/Slim/Slim.php';
 
 \Slim\Slim::registerAutoLoader();

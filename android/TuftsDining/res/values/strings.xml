@@ -42,8 +42,9 @@
     <string name="negative_key">negative</string>
     
     <!-- - - - - - - - - - - - Toasts - - - - - - - - - - - -->
-    <string name="no_data">Couldn\'t get the numbers :(</string>
+    <string name="no_data">Couldn\'t get the numbers</string>
 	<string name="no_post">Unable to post vote, sorry about that.</string>
+	<string name="creating_user">Making you a user&#8230;</string>
 	<string name="successful_vote">Vote posted</string>
 	<string name="failed_vote">Failed to vote</string>
 	<string name="process_canceled">Process canceled</string>
