@@ -151,7 +151,7 @@ $app->post('/venue/vote', function() use ($app) {
 
 	// user fields
 	$mac = $app->request->post(FIELD_MAC);
-	$venueName = $app->request->post(FIELD_NAME);
+	$venueName = $app->request->post(VENUE_NAME);
 	$voteName = $app->request->post(VOTE_NAME);
 	
 	$db = new DbHandler();

@@ -1,21 +1,20 @@
 package valrae.tufts.dining;
 
-import valrae.tufts.dining.RatingFragment.CallbackListener;
 import valrae.tufts.dining.VenueDialogFragment.VenueDialogListener;
 import android.app.Activity;
 import android.content.res.Configuration;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.support.v4.widget.DrawerLayout;
 
 // TODO long term: once a day check for new venues/foods/vote types etc. >> save this in shared preferences
 

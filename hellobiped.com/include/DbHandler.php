@@ -130,10 +130,13 @@ Class DbHandler {
 	function createUser($mac, $ipv4, $ipv6) {
 		$this->createIfNotExists(TBL_USERS);
 
+		date_default_timezone_set('UTC');
+		$timestamp = date('Y-m-d H:i:s');
+
 		// remaining fields of id and date_added will be automatically filled in
-		$mysql = "INSERT INTO ". TBL_USERS ." (". FIELD_MAC .", ". FIELD_IPV4 .", ". FIELD_IPV6 .") VALUES (?, ?, ?)";
+		$mysql = "INSERT INTO ". TBL_USERS ." (". FIELD_MAC .", ". FIELD_IPV4 .", ". FIELD_IPV6 .", ". FIELD_DATE_ADDED .") VALUES (?, ?, ?, ?)";
 		$stmt = $this->conn->prepare($mysql);
-		$stmt->bind_param("sss", $this->mac2int($mac), $this->encodeIp($ipv4), $this->encodeIp($ipv6));
+		$stmt->bind_param("ssss", $this->mac2int($mac), $this->encodeIp($ipv4), $this->encodeIp($ipv6), $timestamp);
 		
 		if ($stmt != false) {
 			$stmt->execute();
@@ -158,11 +161,11 @@ Class DbHandler {
 		$mysql = "SELECT * FROM ". TBL_USERS ." WHERE ". FIELD_MAC ." = ?";
 		$stmt = $this->conn->prepare($mysql);
 		$stmt->bind_param("s", $this->mac2int($mac));
-		
+
 		if ($stmt != false) {
 			$stmt->execute();
-			$stmt->store_result();
-			$row = $stmt->fetch_assoc();
+			$result = $stmt->get_result();
+			$row = $result->fetch_assoc();
 			$stmt->close();
 
 			$user = [
@@ -192,10 +195,10 @@ Class DbHandler {
 		
 		if ($stmt != false) {
 			$stmt->execute();
-			$stmt->store_result();
+			$result = $stmt->get_result();
 
 			$users = array();
-			while ($row = $stmt->fetch_assoc()) {
+			while ($row = $result->fetch_assoc()) {
 				$user = [
 					FIELD_ID => $row[FIELD_ID],
 					FIELD_MAC => $row[FIELD_MAC],
@@ -227,10 +230,10 @@ Class DbHandler {
 		
 		if ($stmt != false) {
 			$stmt->execute();
-			$stmt->store_result();
+			$result = $stmt->get_result();
 
 			$users = array();
-			while ($row = $stmt->fetch_assoc()) {
+			while ($row = $result->fetch_assoc()) {
 				$user = [
 					FIELD_ID => $row[FIELD_ID],
 					FIELD_MAC => $row[FIELD_MAC],
@@ -282,10 +285,10 @@ Class DbHandler {
 		
 		if ($stmt != false) {
 			$stmt->execute();
-			$stmt->store_result();
+			$result = $stmt->get_result();
 
 			$users = array();
-			while ($row = $stmt->fetch_assoc()) {
+			while ($row = $result->fetch_assoc()) {
 				$user = [
 					FIELD_ID => $row[FIELD_ID],
 					FIELD_MAC => $row[FIELD_MAC],
@@ -385,10 +388,12 @@ Class DbHandler {
 	function createVenue($venueName, $class) {
 		$this->createIfNotExists(TBL_VENUES);
 
-		// remaining fields of id and date_added will be automatically filled in
-		$mysql = "INSERT INTO ". TBL_VENUES ." (". FIELD_NAME .", ". FIELD_CLASS .") VALUES (?, ?)";
+		date_default_timezone_set('UTC');
+		$timestamp = date('Y-m-d H:i:s');
+
+		$mysql = "INSERT INTO ". TBL_VENUES ." (". FIELD_NAME .", ". FIELD_CLASS .", ". FIELD_DATE_ADDED .") VALUES (?, ?, ?)";
 		$stmt = $this->conn->prepare($mysql);
-		$stmt->bind_param("ss", $venueName, $class);
+		$stmt->bind_param("sss", $venueName, $class, $timestamp);
 		
 		if ($stmt != false) {
 			$stmt->execute();
@@ -416,8 +421,8 @@ Class DbHandler {
 		
 		if ($stmt != false) {
 			$stmt->execute();
-			$stmt->store_result();
-			$row = $stmt->fetch_assoc();
+			$result = $stmt->get_result();
+			$row = $result->fetch_assoc();
 			$stmt->close();
 
 			$venue = [
@@ -446,10 +451,10 @@ Class DbHandler {
 		
 		if ($stmt != false) {
 			$stmt->execute();
-			$stmt->store_result();
+			$result = $stmt->get_result();
 			
 			$venues = array();
-			while ($row = $stmt->fetch_assoc()) {
+			while ($row = $result->fetch_assoc()) {
 				$venue = [
 					FIELD_ID => $row[FIELD_ID],
 					FIELD_NAME => $row[FIELD_NAME],
@@ -524,10 +529,13 @@ Class DbHandler {
 	 */
 	function createRecipe($recipeName, $class) {
 		$this->createIfNotExists(TBL_RECIPES);
-		// remaining fields of id and date_added will be automatically filled in
-		$mysql = "INSERT INTO ". TBL_RECIPES ." (". FIELD_NAME .", ". FIELD_CLASS .") VALUES (?, ?)";
+		
+		date_default_timezone_set('UTC');
+		$timestamp = date('Y-m-d H:i:s');
+
+		$mysql = "INSERT INTO ". TBL_RECIPES ." (". FIELD_NAME .", ". FIELD_CLASS .", ". FIELD_DATE_ADDED .") VALUES (?, ?, ?)";
 		$stmt = $this->conn->prepare($mysql);
-		$stmt->bind_param("ss", $recipeName, $class);
+		$stmt->bind_param("sss", $recipeName, $class, $timestamp);
 		
 		if ($stmt != false) {
 			$stmt->execute();
@@ -555,8 +563,8 @@ Class DbHandler {
 		
 		if ($stmt != false) {
 			$stmt->execute();
-			$stmt->store_result();
-			$row = $stmt->fetch_assoc();
+			$result = $stmt->get_result();
+			$row = $result->fetch_assoc();
 			$stmt->close();
 
 			$recipe = [
@@ -583,10 +591,10 @@ Class DbHandler {
 		
 		if ($stmt != false) {
 			$stmt->execute();
-			$stmt->store_result();
-			
+			$result = $stmt->get_result();
+
 			$recipes = array();
-			while ($row = $stmt->fetch_assoc()) {
+			while ($row = $result->fetch_assoc()) {
 				$recipe = [
 					FIELD_ID => $row[FIELD_ID],
 					FIELD_NAME => $row[FIELD_NAME],
@@ -661,10 +669,13 @@ Class DbHandler {
 	 */
 	function createVenueVoteType($venueName, $value) {
 		$this->createIfNotExists(TBL_VENUE_VOTE_TYPES);
-		// remaining fields of id and date_added will be automatically filled in
-		$mysql = "INSERT INTO ". TBL_VENUE_VOTE_TYPES ." (". FIELD_NAME .", ". FIELD_VALUE .") VALUES (?, ?)";
+		
+		date_default_timezone_set('UTC');
+		$timestamp = date('Y-m-d H:i:s');
+
+		$mysql = "INSERT INTO ". TBL_VENUE_VOTE_TYPES ." (". FIELD_NAME .", ". FIELD_VALUE .", ". FIELD_DATE_ADDED .") VALUES (?, ?, ?)";
 		$stmt = $this->conn->prepare($mysql);
-		$stmt->bind_param("si", $venueName, $value);
+		$stmt->bind_param("sis", $venueName, $value, $timestamp);
 		
 		if ($stmt != false) {
 			$stmt->execute();
@@ -692,8 +703,8 @@ Class DbHandler {
 		
 		if ($stmt != false) {
 			$stmt->execute();
-			$stmt->store_result();
-			$row = $stmt->fetch_assoc();
+			$result = $stmt->get_result();
+			$row = $result->fetch_assoc();
 			$stmt->close();
 
 			$venueVoteType = [
@@ -746,10 +757,13 @@ Class DbHandler {
 	 */
 	function createRecipeVoteType($typeName, $value) {
 		$this->createIfNotExists(TBL_RECIPE_VOTE_TYPES);
-		// remaining fields of id and date_added will be automatically filled in
-		$mysql = "INSERT INTO ". TBL_RECIPE_VOTE_TYPES ." (". FIELD_NAME .", ". FIELD_VALUE .") VALUES (?, ?)";
+		
+		date_default_timezone_set('UTC');
+		$timestamp = date('Y-m-d H:i:s');
+
+		$mysql = "INSERT INTO ". TBL_RECIPE_VOTE_TYPES ." (". FIELD_NAME .", ". FIELD_VALUE .", ". FIELD_DATE_ADDED .") VALUES (?, ? ?)";
 		$stmt = $this->conn->prepare($mysql);
-		$stmt->bind_param("si", $typeName, $value);
+		$stmt->bind_param("sis", $typeName, $value, $timestamp);
 		
 		if ($stmt != false) {
 			$stmt->execute();
@@ -777,8 +791,8 @@ Class DbHandler {
 		
 		if ($stmt != false) {
 			$stmt->execute();
-			$stmt->store_result();
-			$row = $stmt->fetch_assoc();
+			$result = $stmt->get_result();
+			$row = $result->fetch_assoc();
 			$stmt->close();
 
 			$recipeVoteType = [
@@ -833,9 +847,13 @@ Class DbHandler {
 	function createVVById($userId, $venueId, $venueVoteId) {
 		$this->createIfNotExists(TBL_USER_VENUE_VOTES);
 
+		date_default_timezone_set('UTC');
+		$timestamp = date('Y-m-d H:i:s');
+
 		$mysql = "INSERT INTO ". TBL_USER_VENUE_VOTES ." ( ". FIELD_USER_ID .", "
-			. FIELD_VENUE_ID .", ". FIELD_VENUE_VOTE_ID .") VALUES (?, ?, ?)";
-		$stmt->bind_param("iii", $userId, $venueId, $venueVoteId);
+			. FIELD_VENUE_ID .", ". FIELD_VENUE_VOTE_ID .", ". FIELD_DATE_ADDED .") VALUES (?, ?, ?, ?)";
+		$stmt = $this->conn->prepare($mysql);
+		$stmt->bind_param("iiis", $userId, $venueId, $venueVoteId, $timestamp);
 		if ($stmt != false) {
 			$stmt->execute();
 			$stmt->store_result();
@@ -857,9 +875,9 @@ Class DbHandler {
 	function createVenueVote($mac, $venueName, $venueVoteName) {
 		$this->createIfNotExists(TBL_USER_VENUE_VOTES);
 
-		$user = getUser($mac);
-		$venue = getVenue($venueName);
-		$venueVoteType = getVenueVoteType($venueVoteName);
+		$user = $this->getUser($mac);
+		$venue = $this->getVenue($venueName);
+		$venueVoteType = $this->getVenueVoteType($venueVoteName);
 
 		$success = $this->createVVById($user[FIELD_ID], $venue[FIELD_ID], $venueVoteType[FIELD_ID]);
 		return $success;
@@ -878,7 +896,8 @@ Class DbHandler {
 
 		$mysql = "SELECT votes.* FROM ". TBL_USER_VENUE_VOTES ." votes, users"
 				." WHERE users.". FIELD_MAC ." = ?"
-				." AND users.". FIELD_ID ." = votes.". FIELD_USER_ID ." AND votes.". FIELD_TIME_ADDED ." >= ?";
+				." AND users.". FIELD_ID ." = votes.". FIELD_USER_ID ." AND votes.". FIELD_DATE_ADDED ." >= ?";
+		$stmt = $this->conn->prepare($mysql);
 		$stmt->bind_param("ss", $this->mac2int($mac), $timestamp);
 
 		if ($stmt != false) {
@@ -913,15 +932,16 @@ Class DbHandler {
 		$venue = getVenue($venueName);
 
 		$mysql = "SELECT * FROM ". TBL_USER_VENUE_VOTES ." WHERE ". FIELD_VENUE_ID ." = ?";
+		$stmt = $this->conn->prepare($mysql);
 		$stmt->bind_param("i", $venue[FIELD_ID]);
 		
 		if ($stmt != false) {
 			$stmt->execute();
-			$stmt->store_result();
+			$result = $stmt->get_result();
 			
 			// $votes has keys: {id, user_id, venue_id, venue_vote_id, date_added}
         	$votes = array();
-        	while ($row = $stmt->fetch_assoc()) {
+        	while ($row = $result->fetch_assoc()) {
         		array_push($votes, $row);
         	}
 
@@ -943,14 +963,15 @@ Class DbHandler {
 		$user = getUser($mac);
 
 		$mysql = "SELECT * FROM ". TBL_USER_VENUE_VOTES ." WHERE ". FIELD_USER_ID ." = ?";
+		$stmt = $this->conn->prepare($mysql);
 		$stmt->bind_param("i", $user[FIELD_ID]);
 		if ($stmt != false) {
 			$stmt->execute();
-			$stmt->store_result();
+			$result = $stmt->get_result();
 
 			// $votes has keys: {id, user_id, venue_id, venue_vote_id, date_added}
         	$votes = array();
-        	while ($row = $stmt->fetch_assoc()) {
+        	while ($row = $result->fetch_assoc()) {
         		array_push($votes, $row);
         	}
         	
@@ -980,9 +1001,13 @@ Class DbHandler {
 	function createRVById($userId, $recipeId, $recipeVoteId) {
 		$this->createIfNotExists(TBL_USER_RECIPE_VOTES);
 
+		date_default_timezone_set('UTC');
+		$timestamp = date('Y-m-d H:i:s');
+
 		$mysql = "INSERT INTO ". TBL_USER_RECIPE_VOTES ." ( ". FIELD_USER_ID .", "
-			. FIELD_RECIPE_ID .", ". FIELD_RECIPE_VOTE_ID .") VALUES (?, ?, ?)";
-		$stmt->bind_param("iii", $userId, $recipeId, $recipeVoteId);
+			. FIELD_RECIPE_ID .", ". FIELD_RECIPE_VOTE_ID .", ". FIELD_DATE_ADDED .") VALUES (?, ?, ? ?)";
+		$stmt = $this->conn->prepare($mysql);
+		$stmt->bind_param("iiis", $userId, $recipeId, $recipeVoteId, $timestamp);
 		if ($stmt != false) {
 			$stmt->execute();
 			$stmt->store_result();
@@ -1004,9 +1029,9 @@ Class DbHandler {
 	function createRecipeVote($mac, $recipeName, $recipeVoteName) {
 		$this->createIfNotExists(TBL_USER_RECIPE_VOTES);
 
-		$user = getUser($mac);
-		$recipe = getRecipe($recipeName);
-		$recipeVoteType = getRecipeVoteType($recipeVoteName);
+		$user = $this->getUser($mac);
+		$recipe = $this->getRecipe($recipeName);
+		$recipeVoteType = $this->getRecipeVoteType($recipeVoteName);
 
 		$success = $this->createRVById($user[FIELD_ID], $recipe[FIELD_ID], $recipeVoteType[FIELD_ID]);
 		return $success;
@@ -1034,15 +1059,16 @@ Class DbHandler {
 		$recipe = getRecipe($recipeName);
 
 		$mysql = "SELECT * FROM ". TBL_USER_RECIPE_VOTES ." WHERE ". FIELD_RECIPE_ID ." = ?";
+		$stmt = $this->conn->prepare($mysql);
 		$stmt->bind_param("i", $recipe[FIELD_ID]);
 		
 		if ($stmt != false) {
 			$stmt->execute();
-			$stmt->store_result();
+			$result = $stmt->get_result();
 			
 			// $votes has keys: {id, user_id, recipe_id, recipe_vote_id, date_added}
         	$votes = array();
-        	while ($row = $stmt->fetch_assoc()) {
+        	while ($row = $result->fetch_assoc()) {
         		array_push($votes, $row);
         	}
 
@@ -1064,14 +1090,15 @@ Class DbHandler {
 		$user = getUser($mac);
 
 		$mysql = "SELECT * FROM ". TBL_USER_RECIPE_VOTES ." WHERE ". FIELD_USER_ID ." = ?";
+		$stmt = $this->conn->prepare($mysql);
 		$stmt->bind_param("i", $user[FIELD_ID]);
 		if ($stmt != false) {
 			$stmt->execute();
-			$stmt->store_result();
+			$result = $stmt->get_result();
 
 			// $votes has keys: {id, user_id, recipe_id, recipe_vote_id, date_added}
         	$votes = array();
-        	while ($row = $stmt->fetch_assoc()) {
+        	while ($row = $result->fetch_assoc()) {
         		array_push($votes, $row);
         	}
         	
@@ -1123,7 +1150,8 @@ Class DbHandler {
 			else
 				return SENTINEL_N;	// returns 0
 
-		}
+		} else 		// not a valid ip address
+			return SENTINEL_N;
 	}
 
 	function decodeIp($ip) {
@@ -1146,7 +1174,7 @@ Class DbHandler {
 			else
 				return SENTINEL_N;	// returns 0
 		
-		} else
+		} else 							// not a valid ip address
 			return SENTINEL_N;		// returns 0
 	}
 }

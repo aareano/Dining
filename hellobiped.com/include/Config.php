@@ -27,8 +27,10 @@ define('TBL_USERS', 'users');
 
 define('TBL_VENUES', 'venues');
 	define('FIELD_NAME', 'name');
+	define('VENUE_NAME', 'venue_name');
+
 	define('FIELD_CLASS', 'class');
-	define('CLASS_DINING_HALL', 'dining_hall');
+	define('CLASS_DINING_HALL', 'dining hall');
 	define('CLASS_DINING_HALL', 'take-out');
 
 define('TBL_RECIPES', 'recipes');
