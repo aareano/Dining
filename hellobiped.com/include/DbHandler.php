@@ -182,6 +182,7 @@ Class DbHandler {
 	}
 
 	/**
+	 * NOT USED
 	 * Gets users with date_added field before $timestamp
 	 * @param String $timestamp, in form 'Y-m-d H:i:s'
 	 * @return array of assoc user arrays, false on failure
@@ -216,98 +217,9 @@ Class DbHandler {
         	return SENTINEL;
 	}
 
-	/**
-	 * Gets users with date_added after $timestamp 
-	 * @param String $timestamp, in from 'Y-m-d H:i:s'
-	 * @return array of assoc user arrays, false on failure
-	 */
-	function getUsersAfter($timestamp) {
-		$this->createIfNotExists(TBL_USERS);
-		
-		$mysql = "SELECT * FROM ". TBL_USERS ." WHERE ". FIELD_DATE_ADDED ." > ?";
-		$stmt = $this->conn->prepare($mysql);
-		$stmt->bind_param("s", $timestamp);
-		
-		if ($stmt != false) {
-			$stmt->execute();
-			$result = $stmt->get_result();
-
-			$users = array();
-			while ($row = $result->fetch_assoc()) {
-				$user = [
-					FIELD_ID => $row[FIELD_ID],
-					FIELD_MAC => $row[FIELD_MAC],
-					FIELD_IPV4 => $row[FIELD_IPV4],
-					FIELD_IPV6 => $row[FIELD_IPV6],
-					FIELD_DATE_ADDED => $row[FIELD_DATE_ADDED]
-				];
-				array_push($users, $user);
-			}
-			$stmt->close();
-
-			return $users;
-        
-        } else 	// something is wrong
-        	return SENTINEL;
-	}
-
-	/**
-	 * Gets number of users in database
-	 * @return int number of users, false on failure
-	 */
-	function getNumOfUsers() {
-		$this->createIfNotExists(TBL_USERS);
-		
-		$mysql = "SELECT * FROM ". TBL_USERS;
-		$stmt = $this->conn->prepare($mysql);
-		
-		if ($stmt != false) {
-			$stmt->execute();
-			$stmt->store_result();
-			$numRows = $stmt->affected_rows;
-			$stmt->close();
-
-			return $numRows;
-        
-        } else 	// something is wrong
-        	return SENTINEL;
-	}
-
-	/**
-	 * Gets all users in database
-	 * @return array of user arrays false on failure
-	 */
-	function getAllUsers() {
-		$this->createIfNotExists(TBL_USERS);
-		
-		$mysql = "SELECT * FROM ". TBL_USERS;
-		$stmt = $this->conn->prepare($mysql);
-		
-		if ($stmt != false) {
-			$stmt->execute();
-			$result = $stmt->get_result();
-
-			$users = array();
-			while ($row = $result->fetch_assoc()) {
-				$user = [
-					FIELD_ID => $row[FIELD_ID],
-					FIELD_MAC => $row[FIELD_MAC],
-					FIELD_IPV4 => $row[FIELD_IPV4],
-					FIELD_IPV6 => $row[FIELD_IPV6],
-					FIELD_DATE_ADDED => $row[FIELD_DATE_ADDED]
-				];
-				array_push($users, $user);
-			}
-			$stmt->close();
-
-			return $users;
-        
-        } else 	// something is wrong
-        	return SENTINEL;
-	}
-
 	/* ------ crUd ------ */
 	/**
+	 * NOT USED
 	 * Updates a specific field of a user in db
 	 * @param String $mac, human-readable mac address
 	 * @param String $field, the database field to update
@@ -338,6 +250,7 @@ Class DbHandler {
 
 	/* ------ cruD ------ */
 	/**
+	 * NOT USED
 	 * Deletes user from database
 	 * @param String $mac, human-readable mac addres
 	 * @return int number of rows affected, false on failure
@@ -358,23 +271,6 @@ Class DbHandler {
 			return $numRows;
         } else 	// something is wrong
         	return SENTINEL;
-	}
-	/**
-	 * Deletes users with date_added field BEFORE $timestamp
-	 * @param String $timestamp, in form 'Y-m-d H:i:s'
-	 * @return true if successful, false on failure
-	 */
-	function deleteUsersBefore($timestamp) {
-		// TODO...
-	}
-
-	/**
-	 * Deletes users with date_added field AFTER $timestamp
-	 * @param String $timestamp, in form 'Y-m-d H:i:s'
-	 * @return true if successful, false on failure
-	 */
-	function deleteUserAfter($timestamp) {
-		// TODO...
 	}
 
 /* -------------------------- `venues` table functions -------------------------- */
@@ -437,91 +333,15 @@ Class DbHandler {
         	return SENTINEL;
 	}
 
-	/**
-	 * Gets venues of a given class
-	 * @param String $class
-	 * @return array of assoc venue arrays, false on failure
-	 */
-	function getVenues($class) {
-		$this->createIfNotExists(TBL_VENUES);
-		
-		$mysql = "SELECT * FROM ". TBL_VENUES ." WHERE ". FIELD_CLASS ." = ?";
-		$stmt = $this->conn->prepare($mysql);
-		$stmt->bind_param("s", $class);
-		
-		if ($stmt != false) {
-			$stmt->execute();
-			$result = $stmt->get_result();
-			
-			$venues = array();
-			while ($row = $result->fetch_assoc()) {
-				$venue = [
-					FIELD_ID => $row[FIELD_ID],
-					FIELD_NAME => $row[FIELD_NAME],
-					FIELD_CLASS => $row[FIELD_CLASS],
-					FIELD_DATE_ADDED => $row[FIELD_DATE_ADDED]
-			];
-				array_push($venues, $venue);
-			}
-			$stmt->close();
-
-			return $venues;
-        } else 	// something is wrong
-        	return SENTINEL;														// probably not needed
-	}
-
 	/* ------ crUd ------ */
-	/**
-	 * Update a certain field of a venue
-	 * @param String $field - db field
-	 * @param String $value - updated value
-	 * @return int number of rows affected, false on failure
-	 */
-	function updateVenue($venueName, $field, $value) {
-		$this->createIfNotExists(TBL_VENUES);
-
-		$mysql = "UPDATE ". TBL_VENUES ." SET ". $field ." = ? WHERE ". FIELD_NAME ." = ?";
-		$stmt = $this->conn->prepare($mysql);
-		$stmt->bind_param("ss", $value, $venueName);
-		
-		if ($stmt != false) {
-			$stmt->execute();
-			$stmt->store_result();
-			$numRows = $stmt->affected_rows;
-			$stmt->close();
-
-			return $numRows;
-        } else 	// something is wrong
-        	return SENTINEL;
-	}
 
 	/* ------ cruD ------ */
-	/**
-	 * Deletes a venue from db
-	 * @param String $venueName
-	 * @return int number of rows affected, false on failure
-	 */
-	function deleteVenue($venueName) {		// TODO I wonder if the $field, $value would work for a lot more functions like this one...
-		$this->createIfNotExists(TBL_VENUES);	// answer: yes, it would. but we really don't need flexibility like that.
-
-		$mysql = "DELETE FROM ". TBL_VENUES ." WHERE ". FIELD_NAME ." = ?";
-		$stmt = $this->conn->prepare($mysql);
-		$stmt->bind_param("s", $venueName);
-		
-		if ($stmt != false) {
-			$stmt->execute();
-			$stmt->store_result();
-			$numRows = $stmt->affected_rows;
-			$stmt->close();
-
-			return $numRows;
-        } else 	// something is wrong
-        	return SENTINEL;
-	}
 
 /* -------------------------- `recipes` table functions -------------------------- */
+/* ------------------------------- NOT IMPLEMENTED ------------------------------- */
 	/* ------ Crud ------ */
 	/**
+	 * NOT USED
 	 * Inserts a recipe into db
 	 * @param String $recipeName
 	 * @param String $class
@@ -550,6 +370,7 @@ Class DbHandler {
 
 	/* ------ cRud ------ */
 	/**
+	 * NOT USED
 	 * Selects a recipe from db
 	 * @param String $recipeName
 	 * @return recipe assoc array, false on failure
@@ -579,116 +400,13 @@ Class DbHandler {
         	return SENTINEL;
 	}
 
-	/**
-	 * @return array of assoc recipe arrays
-	 */
-	function getRecipes($class) {
-		$this->createIfNotExists(TBL_RECIPES);
-		
-		$mysql = "SELECT * FROM ". TBL_RECIPES ." WHERE ". FIELD_CLASS ." = ?";
-		$stmt = $this->conn->prepare($mysql);
-		$stmt->bind_param("s", $class);
-		
-		if ($stmt != false) {
-			$stmt->execute();
-			$result = $stmt->get_result();
-
-			$recipes = array();
-			while ($row = $result->fetch_assoc()) {
-				$recipe = [
-					FIELD_ID => $row[FIELD_ID],
-					FIELD_NAME => $row[FIELD_NAME],
-					FIELD_CLASS => $row[FIELD_CLASS],
-					FIELD_DATE_ADDED => $row[FIELD_DATE_ADDED]
-			];
-				array_push($recipes, $recipe);
-			}
-			$stmt->close();
-
-			return $recipes;
-        } else 	// something is wrong
-        	return SENTINEL;														// probably not needed
-	}
-
 	/* ------ crUd ------ */
-	/**
-	 * Updates a field of a given recipe in db
-	 * @param String $field - db field
-	 * @param String $value - updated value
-	 * @return int number of rows affected, false on failure
-	 */
-	function updateRecipe($recipeName, $field, $value) {
-		$this->createIfNotExists(TBL_RECIPES);
-
-		$mysql = "UPDATE ". TBL_RECIPES ." SET ". $field ." = ? WHERE ". FIELD_NAME ." = ?";
-		$stmt = $this->conn->prepare($mysql);
-		$stmt->bind_param("ss", $value, $recipeName);
-		
-		if ($stmt != false) {
-			$stmt->execute();
-			$stmt->store_result();
-			$numRows = $stmt->affected_rows;
-			$stmt->close();
-
-			return $numRows;
-        } else 	// something is wrong
-        	return SENTINEL;
-	}
 
 	/* ------ cruD ------ */
-	/**
-	 * Deletes a recipe from db
-	 * @param String $recipeName
-	 * @return int number of rows affected, false on failure
-	 */
-	function deleteRecipe($recipeName) {
-		$this->createIfNotExists(TBL_RECIPES);
-
-		$mysql = "DELETE FROM ". TBL_RECIPES ." WHERE ". FIELD_NAME ." = ?";
-		$stmt = $this->conn->prepare($mysql);
-		$stmt->bind_param("s", $recipeName);
-		
-		if ($stmt != false) {
-			$stmt->execute();
-			$stmt->store_result();
-			$numRows = $stmt->affected_rows;
-			$stmt->close();
-
-			return $numRows;
-        } else 	// something is wrong
-        	return SENTINEL;
-	}
 
 /* -------------------------- `venue_vote_types` table functions -------------------------- */
-	/* ------ Crud ------ */
-	/**
-	 * Creates a venue vote type in db
-	 * @param String $venueName
-	 * @param String $value
-	 * @return true if successful, false on failure
-	 */
-	function createVenueVoteType($venueName, $value) {
-		$this->createIfNotExists(TBL_VENUE_VOTE_TYPES);
-		
-		date_default_timezone_set('UTC');
-		$timestamp = date('Y-m-d H:i:s');
 
-		$mysql = "INSERT INTO ". TBL_VENUE_VOTE_TYPES ." (". FIELD_NAME .", ". FIELD_VALUE .", ". FIELD_DATE_ADDED .") VALUES (?, ?, ?)";
-		$stmt = $this->conn->prepare($mysql);
-		$stmt->bind_param("sis", $venueName, $value, $timestamp);
-		
-		if ($stmt != false) {
-			$stmt->execute();
-			$stmt->store_result();
-			$rows = $stmt->affected_rows;
-			$stmt->close();
-
-			return $rows > 0;
-        } else 	// something is wrong
-        	return SENTINEL;
-	}
-
-	/* ------ cRud ------ */
+/* ------ cRud ------ */
 	/**
 	 * Gets a venue vote type from db
 	 * @param String $venueName
@@ -696,11 +414,11 @@ Class DbHandler {
 	 */
 	function getVenueVoteType($venueName) {
 		$this->createIfNotExists(TBL_VENUE_VOTE_TYPES);
-		
+
 		$mysql = "SELECT * FROM ". TBL_VENUE_VOTE_TYPES ." WHERE ". FIELD_NAME ." = ?";
 		$stmt = $this->conn->prepare($mysql);
 		$stmt->bind_param("s", $venueName);
-		
+
 		if ($stmt != false) {
 			$stmt->execute();
 			$result = $stmt->get_result();
@@ -719,120 +437,7 @@ Class DbHandler {
         	return SENTINEL;
 	}
 
-	/* ------ crUd ------ */
-	// TODO as needed...
-
-	/* ------ cruD ------ */
-	/**
-	 * Deletes a venue from the db
-	 * @param String $venueName
-	 * @return int number of rows affected, false on failure
-	 */
-	function deleteVenueVoteType($venueName) {
-		$this->createIfNotExists(TBL_VENUE_VOTE_TYPES);
-
-		$mysql = "DELETE FROM ". TBL_VENUE_VOTE_TYPES ." WHERE ". FIELD_NAME ." = ?";
-		$stmt = $this->conn->prepare($mysql);
-		$stmt->bind_param("s", $venueName);
-		
-		if ($stmt != false) {
-			$stmt->execute();
-			$stmt->store_result();
-			$numRows = $stmt->affected_rows;
-			$stmt->close();
-
-			return $numRows;
-        } else 	// something is wrong
-        	return SENTINEL;
-	}
-
 /* -------------------------- `recipe_vote_types` table functions -------------------------- */
-
-	/* ------ Crud ------ */
-	/**
-	 * Creates a recipe vote type in db
-	 * @param String $typeName
-	 * @param String $value
-	 * @return true if successful, false on failure
-	 */
-	function createRecipeVoteType($typeName, $value) {
-		$this->createIfNotExists(TBL_RECIPE_VOTE_TYPES);
-		
-		date_default_timezone_set('UTC');
-		$timestamp = date('Y-m-d H:i:s');
-
-		$mysql = "INSERT INTO ". TBL_RECIPE_VOTE_TYPES ." (". FIELD_NAME .", ". FIELD_VALUE .", ". FIELD_DATE_ADDED .") VALUES (?, ? ?)";
-		$stmt = $this->conn->prepare($mysql);
-		$stmt->bind_param("sis", $typeName, $value, $timestamp);
-		
-		if ($stmt != false) {
-			$stmt->execute();
-			$stmt->store_result();
-			$rows = $stmt->affected_rows;
-			$stmt->close();
-
-			return $rows > 0;
-        } else 	// something is wrong
-        	return SENTINEL;
-	}
-
-	/* ------ cRud ------ */
-	/**
-	 * Gets a recipe vote type from db
-	 * @param String $recipeName
-	 * @return recipe vote type assoc array, false on failure
-	 */
-	function getRecipeVoteType($recipeName) {
-		$this->createIfNotExists(TBL_RECIPE_VOTE_TYPES);
-		
-		$mysql = "SELECT * FROM ". TBL_RECIPE_VOTE_TYPES ." WHERE ". FIELD_NAME ." = ?";
-		$stmt = $this->conn->prepare($mysql);
-		$stmt->bind_param("s", $recipeName);
-		
-		if ($stmt != false) {
-			$stmt->execute();
-			$result = $stmt->get_result();
-			$row = $result->fetch_assoc();
-			$stmt->close();
-
-			$recipeVoteType = [
-				FIELD_ID => $row[FIELD_ID],
-				FIELD_NAME => $row[FIELD_NAME],
-				FIELD_VALUE => $row[FIELD_VALUE],
-				FIELD_DATE_ADDED => $row[FIELD_DATE_ADDED]
-			];
-
-			return $recipeVoteType;
-        } else 	// something is wrong
-        	return SENTINEL;
-	}
-
-	/* ------ crUd ------ */
-	// TODO as needed...
-
-	/* ------ cruD ------ */
-	/**
-	 * Deletes a recipe vote type from db
-	 * @param String $recipeName
-	 * @return int number of rows affected, false on failure
-	 */
-	function deleteRecipeVoteType($recipeName) {
-		$this->createIfNotExists(TBL_RECIPE_VOTE_TYPES);
-
-		$mysql = "DELETE FROM ". TBL_RECIPE_VOTE_TYPES ." WHERE ". FIELD_NAME ." = ?";
-		$stmt = $this->conn->prepare($mysql);
-		$stmt->bind_param("s", $recipeName);
-		
-		if ($stmt != false) {
-			$stmt->execute();
-			$stmt->store_result();
-			$numRows = $stmt->affected_rows;
-			$stmt->close();
-
-			return $numRows;
-        } else 	// something is wrong
-        	return SENTINEL;
-	}
 
 /* -------------------------- `user_venue_votes` table functions -------------------------- */
 	/* ------ Crud ------ */
@@ -912,16 +517,7 @@ Class DbHandler {
 	}
 
 	/**
-	 * Gets all votes for a given recipe with date_added after $timestmp
-	 * @param String $recipeName
-	 * @param String $timestamp
-	 * @return assoc array of votes
-	 */
-	function getRecentVenueVotes($venueName, $timestamp) {
-		// TODO...also change function name
-	}
-
-	/**
+	 * NOT USED
 	 * Gets all votes for a given venue
 	 * @param String $venueName
 	 * @return assoc array of votes
@@ -929,7 +525,7 @@ Class DbHandler {
 	function getVotesByVenue($venueName) {
 		$this->createIfNotExists(TBL_USER_VENUE_VOTES);
 
-		$venue = getVenue($venueName);
+		$venue = $this->getVenue($venueName);
 
 		$mysql = "SELECT * FROM ". TBL_USER_VENUE_VOTES ." WHERE ". FIELD_VENUE_ID ." = ?";
 		$stmt = $this->conn->prepare($mysql);
@@ -952,36 +548,6 @@ Class DbHandler {
         	return SENTINEL;
 	}
 
-	/**
-	 * Gets all votes by a given user
-	 * @param String $mac - MAC address of user
-	 * @return assoc array of votes
-	 */
-	function getVenueVotesByUser($mac) {
-		$this->createIfNotExists(TBL_USER_VENUE_VOTES);
-
-		$user = getUser($mac);
-
-		$mysql = "SELECT * FROM ". TBL_USER_VENUE_VOTES ." WHERE ". FIELD_USER_ID ." = ?";
-		$stmt = $this->conn->prepare($mysql);
-		$stmt->bind_param("i", $user[FIELD_ID]);
-		if ($stmt != false) {
-			$stmt->execute();
-			$result = $stmt->get_result();
-
-			// $votes has keys: {id, user_id, venue_id, venue_vote_id, date_added}
-        	$votes = array();
-        	while ($row = $result->fetch_assoc()) {
-        		array_push($votes, $row);
-        	}
-        	
-        	$stmt->close();
-        	return $votes;
-        
-        } else 	// something is wrong
-        	return SENTINEL;
-	}
-
 	/* ------ crUd ------ */
 	// TODO will fill this out as needed
 
@@ -989,6 +555,8 @@ Class DbHandler {
 	// TODO will fill this out as needed
 
 /* -------------------------- `user_recipe_votes` table functions -------------------------- */
+/* ------------------------------------ NOT IMPLEMENTED ------------------------------------ */
+	
 	/* ------ Crud ------ */
 	/**
 	 * Creates a vote >> an entry that matches all necessary chunks of data.
@@ -1072,36 +640,6 @@ Class DbHandler {
         		array_push($votes, $row);
         	}
 
-        	$stmt->close();
-        	return $votes;
-        
-        } else 	// something is wrong
-        	return SENTINEL;
-	}
-
-	/**
-	 * Gets all votes by a given user
-	 * @param $mac - MAC address of user
-	 * @return assoc array of votes
-	 */
-	function getRecipeVotesByUser($mac) {
-		$this->createIfNotExists(TBL_USER_RECIPE_VOTES);
-
-		$user = getUser($mac);
-
-		$mysql = "SELECT * FROM ". TBL_USER_RECIPE_VOTES ." WHERE ". FIELD_USER_ID ." = ?";
-		$stmt = $this->conn->prepare($mysql);
-		$stmt->bind_param("i", $user[FIELD_ID]);
-		if ($stmt != false) {
-			$stmt->execute();
-			$result = $stmt->get_result();
-
-			// $votes has keys: {id, user_id, recipe_id, recipe_vote_id, date_added}
-        	$votes = array();
-        	while ($row = $result->fetch_assoc()) {
-        		array_push($votes, $row);
-        	}
-        	
         	$stmt->close();
         	return $votes;
         
